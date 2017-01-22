@@ -4,7 +4,9 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "babel": "./node_modules/.bin/babel src/ --watch --out-dir build/",
+    "start": "electron .",
+    "dev": "npm run babel | npm start"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -17,10 +19,17 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^1.4.1"
+    "babel-cli": "^6.22.2",
+    "babel-preset-react": "^6.22.0",
+    "electron": "^1.4.1",
+    "webpack": "^1.14.0"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "lodash": "^4.17.4",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "vue": "^2.1.10"
   }
 }

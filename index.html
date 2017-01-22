@@ -8,20 +8,11 @@
     <link rel="stylesheet" href="./app.css">
   </head>
   <body>
-    <input type="text" class="custom-input form-control"/>
-    <hr/>
-    <div id="textures">
-      <texture-list v-bind:textures="textures"/>
-    </div>
-    <div class="footer">
-      <hr style="top: 0;"/>
-      <p class="thumb-resizer">100%</p>
-    </div>
+    <div id=root />
   </body>
 
-  <script src="./node_modules/vue/dist/vue.js"></script>
   <script>
     // You can also require other files to run in this process
-    require('./renderer.js')
+    require('./build/renderer.js')
   </script>
 </html>
