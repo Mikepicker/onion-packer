@@ -16,6 +16,12 @@ export default class Grid extends Component {
       const reactCol = [];
 
       row.forEach((col) => {
+
+        // Push filtered text only
+        let textureName = col.split('/').pop().split('.')[0].toLowerCase();
+        if (textureName.indexOf(this.props.filterText) === -1)
+          return;
+
         reactCol.push(
           <Item key={col} texture={col} setSelected={this.props.setSelected}/>
         );
@@ -39,5 +45,5 @@ const gridStyle = {
 }
 
 const rowStyle = {
-  marginTop: '20px'
+  marginBottom: '20px'
 }

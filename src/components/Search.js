@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
 
 export default class Search extends Component {
+
+  handleChange = () => {
+    this.props.setFilterText(this.filterTextInput.value);
+  }
+
   render() {
     return(
       <div>
-        <input type="text" className="form-control" style={inputStyle}/>
+        <input
+          type="text"
+          className="form-control"
+          value={this.props.filterText}
+          ref={(input) => this.filterTextInput = input}
+          onChange={this.handleChange}
+          style={inputStyle}/>
         <hr style={dividerStyle}/>
       </div>
     );
