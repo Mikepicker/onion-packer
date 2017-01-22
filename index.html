@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Onion Packer</title>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="./app.css">
+  </head>
+  <body>
+    <input type="text" class="custom-input form-control"/>
+    <hr/>
+    <div id="textures">
+      <texture-list v-bind:textures="textures"/>
+    </div>
+    <div class="footer">
+      <hr style="top: 0;"/>
+      <p class="thumb-resizer">100%</p>
+    </div>
+  </body>
+
+  <script src="./node_modules/vue/dist/vue.js"></script>
+  <script>
+    // You can also require other files to run in this process
+    require('./renderer.js')
+  </script>
+</html>
