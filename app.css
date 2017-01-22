@@ -1,4 +1,6 @@
 body {
   font-family: 'Nunito Sans', sans-serif;
   font-weight: bold;
+  -webkit-user-select: none;
+  user-select: none;
 }

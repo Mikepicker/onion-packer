@@ -1,34 +1,14 @@
 import React, { Component } from 'react';
 import Item from './Item';
-import fs from 'fs';
 import { chunk } from 'lodash';
 
-const PATH = './textures/';
 const CHUNKS = 4;
 
 export default class Grid extends Component {
-  constructor(props) {
-      super(props);
-
-      this.state = {
-        'textures': this.getTextures()
-      }
-  }
-
-  getTextures() {
-    let texturesArray = [];
-    let files = fs.readdirSync(PATH);
-    files.forEach(file => {
-        texturesArray.push(PATH + file);
-    });
-    console.log(texturesArray);
-    return texturesArray;
-  }
-
   render() {
 
     // Chunk textures array
-    const rows = chunk(this.state.textures, CHUNKS);
+    const rows = chunk(this.props.textures, CHUNKS);
     let reactRows = [];
     let rowKey = 0;
 
@@ -37,7 +17,7 @@ export default class Grid extends Component {
 
       row.forEach((col) => {
         reactCol.push(
-          <Item key={col} image={col}/>
+          <Item key={col} texture={col} setSelected={this.props.setSelected}/>
         );
       });
 
