@@ -1,12 +1,33 @@
 import React, { Component } from 'react';
 
 export default class Footer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      menuVisible: false
+    }
+
+  }
+
+  toggleMenu = () => {
+    this.setState(prevState => ({
+      menuVisible: !prevState.menuVisible
+    }));
+  }
+
   render() {
+
+    let menuButtonClass = this.state.menuVisible ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
+
     return(
-      <div style={footerStyle}>
-        <p style={resizerStyle}>100%</p>
-        <p style={descrStyle}>{this.props.selected.split("/").pop()}</p>
-        <p style={descrStyle}></p>
+      <div>
+        {this.state.menuVisible ? <div style={menuStyle}/> : null}
+        <div style={footerStyle}>
+          <p style={resizerStyle}>100%</p>
+          <p style={descrStyle}>{this.props.selected.replace(/^.*[\\\/]/, '')}</p>
+          <div className={menuButtonClass} style={menuButtonStyle} onClick={this.toggleMenu}/>
+        </div>
       </div>
     );
   }
@@ -14,11 +35,11 @@ export default class Footer extends Component {
 
 const footerStyle = {
   position: 'absolute',
-  padding: '0 8px 0 8px',
+  padding: '0 16px 0 16px',
   bottom: '0',
   width: '100%',
   height: '40px',
-  backgroundColor: '#404040',
+  backgroundColor: '#303030',
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'flex-end'
@@ -36,4 +57,22 @@ const descrStyle = {
   color: '#fff',
   flex: '1',
   textAlign: 'center'
+}
+
+const menuButtonStyle = {
+  color: '#fff',
+  alignSelf: 'center',
+  cursor: 'pointer'
+}
+
+const menuStyle = {
+  position: 'absolute',
+  padding: '0 16px 0 16px',
+  bottom: '40px',
+  width: '100%',
+  height: '40px',
+  backgroundColor: '#404040',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'flex-end'
 }

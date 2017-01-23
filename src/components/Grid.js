@@ -18,7 +18,8 @@ export default class Grid extends Component {
       row.forEach((col) => {
 
         // Push filtered text only
-        let textureName = col.split('/').pop().split('.')[0].toLowerCase();
+        //let textureName = col.split('/').pop().split('.')[0].toLowerCase();
+        let textureName = col.replace(/^.*[\\\/]/, '').toLowerCase();
         if (textureName.indexOf(this.props.filterText) === -1)
           return;
 
