@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
 body {
   font-family: 'Nunito Sans', sans-serif;
   font-weight: bold;

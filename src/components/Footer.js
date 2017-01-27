@@ -24,8 +24,8 @@ export default class Footer extends Component {
       <div>
         {this.state.menuVisible ? <div style={menuStyle}/> : null}
         <div style={footerStyle}>
-          <p style={resizerStyle}>100%</p>
-          <p style={descrStyle}>{this.props.selected.replace(/^.*[\\\/]/, '')}</p>
+          <div style={resizerStyle}>100%</div>
+          <div style={descrStyle}>{this.props.selected}</div>
           <div className={menuButtonClass} style={menuButtonStyle} onClick={this.toggleMenu}/>
         </div>
       </div>
@@ -34,7 +34,7 @@ export default class Footer extends Component {
 }
 
 const footerStyle = {
-  position: 'absolute',
+  position: 'fixed',
   padding: '0 16px 0 16px',
   bottom: '0',
   width: '100%',
@@ -42,7 +42,8 @@ const footerStyle = {
   backgroundColor: '#303030',
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'flex-end'
+  alignItems: 'center',
+  justifyContent: 'center'
 }
 
 const resizerStyle = {
@@ -61,8 +62,9 @@ const descrStyle = {
 
 const menuButtonStyle = {
   color: '#fff',
-  alignSelf: 'center',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  flex: '1',
+  textAlign: 'right'
 }
 
 const menuStyle = {

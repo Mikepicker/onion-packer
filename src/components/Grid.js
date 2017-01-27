@@ -7,8 +7,22 @@ const CHUNKS = 4;
 export default class Grid extends Component {
   render() {
 
+    // Filtered textures
+    let filteredRows = [];
+    this.props.textures.forEach((texture) => {
+
+      // Push filtered text only
+      let textureName = texture.replace(/^.*[\\\/]/, '').toLowerCase();
+
+      if (textureName.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1 ||
+          this.props.tag.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1) {
+        filteredRows.push({ name: textureName, path: texture });
+      }
+
+    });
+
     // Chunk textures array
-    const rows = chunk(this.props.textures, CHUNKS);
+    const rows = chunk(filteredRows, CHUNKS);
     let reactRows = [];
     let rowKey = 0;
 
@@ -16,15 +30,13 @@ export default class Grid extends Component {
       const reactCol = [];
 
       row.forEach((col) => {
-
-        // Push filtered text only
-        //let textureName = col.split('/').pop().split('.')[0].toLowerCase();
-        let textureName = col.replace(/^.*[\\\/]/, '').toLowerCase();
-        if (textureName.indexOf(this.props.filterText) === -1)
-          return;
-
         reactCol.push(
-          <Item key={col} texture={col} setSelected={this.props.setSelected}/>
+          <Item
+            key={col.name}
+            name={col.name}
+            path={col.path}
+            setSelected={this.props.setSelected}
+            copyToClipboard={this.props.copyToClipboard}/>
         );
       });
 
@@ -33,18 +45,32 @@ export default class Grid extends Component {
       );
     })
 
-    return(
+    // Hide grid if no data
+    let content = null;
+    if (filteredRows.length > 0) {
+      content =
       <div className="container-fluid" style={gridStyle}>
+        <div style={tagStyle}>{this.props.tag}</div>
         {reactRows}
       </div>
+    }
+
+    return(
+      <div>{content}</div>
     );
   }
 }
 
 const gridStyle = {
-  marginTop: '20px'
+  marginTop: '50px'
 }
 
 const rowStyle = {
   marginBottom: '20px'
+}
+
+const tagStyle = {
+  marginBottom: '20px',
+  fontSize: '12px',
+  color: '#a1a1a1'
 }

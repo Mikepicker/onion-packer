@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { clipboard, nativeImage } from 'electron';
+import path from 'path';
 import Search from './Search';
 import Grid from './Grid';
 import Footer from './Footer';
@@ -53,16 +55,49 @@ export default class Container extends Component {
     this.setState({ selected: texture });
   }
 
+  copyToClipboard = (textureName) => {
+    clipboard.writeImage(nativeImage.createFromPath('textures/' + textureName));
+    this.setState({ selected: 'Copied to clipboard!' });
+  }
+
   render() {
+
+    // Grids
+    let grids = [];
+
+    grids.push(
+      <Grid
+        key={1}
+        textures={this.state.textures}
+        tag='Iron'
+        setSelected={this.setSelected}
+        filterText={this.state.filterText}
+        copyToClipboard={this.copyToClipboard}
+      />
+    );
+
+    grids.push(
+      <Grid
+        key={2}
+        textures={this.state.textures}
+        tag='Wood'
+        setSelected={this.setSelected}
+        filterText={this.state.filterText}
+        copyToClipboard={this.copyToClipboard}
+      />
+    );
+
     return(
-      <div>
+      <div style={containerStyle}>
         <Search setFilterText={this.setFilterText}/>
-        <Grid
-          textures={this.state.textures}
-          setSelected={this.setSelected}
-          filterText={this.state.filterText}/>
+        {grids}
         <Footer selected={this.state.selected}/>
       </div>
     );
   }
+}
+const containerStyle = {
+  width: '100%',
+  height: '100%',
+  paddingTop: '40px'
 }

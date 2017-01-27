@@ -8,7 +8,7 @@ export default class Search extends Component {
 
   render() {
     return(
-      <div>
+      <div style={searchStyle}>
         <input
           type="text"
           className="form-control"
@@ -20,6 +20,14 @@ export default class Search extends Component {
       </div>
     );
   }
+}
+
+const searchStyle = {
+  position: 'fixed',
+  top: 0,
+  width: '100%',
+  backgroundColor: '#fff',
+  zIndex: 1
 }
 
 const inputStyle = {
