@@ -1,34 +1,18 @@
 import React, { Component } from 'react';
 
 export default class Footer extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      menuVisible: false
-    }
-
-  }
-
-  toggleMenu = () => {
-    this.setState(prevState => ({
-      menuVisible: !prevState.menuVisible
-    }));
-  }
-
   render() {
 
-    let menuToggleClass = this.state.menuVisible ? 'fa fa-chevron-down' : 'fa fa-chevron-up';
     let viewModeButtonClass = this.props.viewTextures ? 'fa fa-picture-o' : 'fa fa-tags';
 
     return(
       <div>
-        {this.state.menuVisible ? menu : null}
         <div style={footerStyle}>
           <div className={viewModeButtonClass} style={viewModeButtonStyle} onClick={this.props.toggleViewMode}/>
           <div style={descrStyle}>{this.props.footerText}</div>
-          <div className={menuToggleClass} style={menuToggleStyle} onClick={this.toggleMenu}/>
+          <div style={{ flex: 1 }}/>
         </div>
+        <div style={creditsStyle}>Made with <div className='fa fa-heart'/> by Michele Rullo & Andrea Cipollone</div>
       </div>
     );
   }
@@ -37,7 +21,7 @@ export default class Footer extends Component {
 const footerStyle = {
   position: 'fixed',
   padding: '0 16px 0 16px',
-  bottom: '0',
+  bottom: '20px',
   width: '100%',
   height: '40px',
   backgroundColor: '#303030',
@@ -62,24 +46,17 @@ const descrStyle = {
   fontWeight: 'normal'
 }
 
-const menuToggleStyle = {
-  color: '#fff',
-  cursor: 'pointer',
-  flex: '1',
-  textAlign: 'right',
-  visibility: 'hidden'
-}
-
-const menuStyle = {
+const creditsStyle = {
   position: 'fixed',
-  padding: '0 16px 0 16px',
-  bottom: '40px',
+  padding: '4px 16px 0 16px',
+  bottom: '0',
   width: '100%',
-  height: '40px',
-  backgroundColor: '#404040',
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center'
+  height: '20px',
+  backgroundColor: '#202020',
+  color: '#7e7e7e',
+  fontSize: '10px',
+  fontWeight: 'bold',
+  textAlign: 'center'
 }
 
 const viewModeButtonStyle = {
