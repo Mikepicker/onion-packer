@@ -12,7 +12,7 @@ export default class Footer extends Component {
           <div style={descrStyle}>{this.props.footerText}</div>
           <div style={{ flex: 1 }}/>
         </div>
-        <div style={creditsStyle}>Made with <div className='fa fa-heart'/> by Michele Rullo & Andrea Cipollone</div>
+        <div style={creditsStyle}>Made with <div className='fa fa-heart' style={{ color: '#ff6f6f'}}/> by Michele Rullo & Andrea Cipollone</div>
       </div>
     );
   }
