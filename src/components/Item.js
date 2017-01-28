@@ -11,12 +11,12 @@ export default class Item extends Component {
 
   onHover = () => {
     this.setState({ 'hover': true });
-    this.props.setSelected(this.props.name);
+    this.props.setFooterText(this.props.name);
   }
 
   onOut = () => {
     this.setState({ 'hover': false });
-    this.props.setSelected('');
+    this.props.setFooterText('');
   }
 
   onClick = () => {

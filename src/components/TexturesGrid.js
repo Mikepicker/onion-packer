@@ -4,7 +4,7 @@ import { chunk } from 'lodash';
 
 const CHUNKS = 4;
 
-export default class Grid extends Component {
+export default class TexturesGrid extends Component {
   render() {
 
     // Filtered textures
@@ -35,7 +35,7 @@ export default class Grid extends Component {
             key={col.name}
             name={col.name}
             path={col.path}
-            setSelected={this.props.setSelected}
+            setFooterText={this.props.setFooterText}
             copyToClipboard={this.props.copyToClipboard}/>
         );
       });
@@ -62,7 +62,7 @@ export default class Grid extends Component {
 }
 
 const gridStyle = {
-  marginTop: '50px'
+  marginTop: '40px'
 }
 
 const rowStyle = {

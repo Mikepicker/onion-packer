@@ -18,15 +18,16 @@ export default class Footer extends Component {
 
   render() {
 
-    let menuButtonClass = this.state.menuVisible ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
+    let menuToggleClass = this.state.menuVisible ? 'fa fa-chevron-down' : 'fa fa-chevron-up';
+    let viewModeButtonClass = this.props.viewTextures ? 'fa fa-picture-o' : 'fa fa-tags';
 
     return(
       <div>
-        {this.state.menuVisible ? <div style={menuStyle}/> : null}
+        {this.state.menuVisible ? menu : null}
         <div style={footerStyle}>
-          <div style={resizerStyle}>100%</div>
-          <div style={descrStyle}>{this.props.selected}</div>
-          <div className={menuButtonClass} style={menuButtonStyle} onClick={this.toggleMenu}/>
+          <div className={viewModeButtonClass} style={viewModeButtonStyle} onClick={this.props.toggleViewMode}/>
+          <div style={descrStyle}>{this.props.footerText}</div>
+          <div className={menuToggleClass} style={menuToggleStyle} onClick={this.toggleMenu}/>
         </div>
       </div>
     );
@@ -57,18 +58,20 @@ const descrStyle = {
   fontSize: '12px',
   color: '#fff',
   flex: '1',
-  textAlign: 'center'
+  textAlign: 'center',
+  fontWeight: 'normal'
 }
 
-const menuButtonStyle = {
+const menuToggleStyle = {
   color: '#fff',
   cursor: 'pointer',
   flex: '1',
-  textAlign: 'right'
+  textAlign: 'right',
+  visibility: 'hidden'
 }
 
 const menuStyle = {
-  position: 'absolute',
+  position: 'fixed',
   padding: '0 16px 0 16px',
   bottom: '40px',
   width: '100%',
@@ -76,5 +79,11 @@ const menuStyle = {
   backgroundColor: '#404040',
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'flex-end'
+  alignItems: 'center'
+}
+
+const viewModeButtonStyle = {
+  flex: '1',
+  color: '#fff',
+  cursor: 'pointer'
 }
