@@ -5,6 +5,7 @@ import Search from './Search';
 import TexturesGrid from './TexturesGrid';
 import TagsGrid from './TagsGrid';
 import Footer from './Footer';
+import Scene from './Scene';
 import fs from 'fs';
 import chokidar from 'chokidar';
 
@@ -20,7 +21,8 @@ export default class Container extends Component {
       textures: [],
       footerText: '',
       filterText: '',
-      viewTextures: true // textures or tags
+      viewMode: 'textures', // textures, tags, preview
+      texturePreview: null
     }
 
   }
@@ -92,15 +94,33 @@ export default class Container extends Component {
     this.setState({ footerText: texture });
   }
 
-  copyToClipboard = (textureName) => {
-    clipboard.writeImage(nativeImage.createFromPath('textures/' + textureName));
+  onTexturePreview = (texturePath) => {
+    this.setState({ viewMode: 'preview', texturePreview: texturePath })
+  }
+
+  copyToClipboard = (texturePath) => {
+    clipboard.writeImage(nativeImage.createFromPath(texturePath));
     this.setState({ footerText: 'Copied to clipboard!' });
   }
 
+  goToTag = (tag) => {
+    this.setState({ filterText: tag, viewMode: 'textures' });
+  }
+
   toggleViewMode = () => {
-    this.setState(prevState => ({
-      viewTextures: !prevState.viewTextures
-    }));
+
+    let nextViewMode;
+
+    if (this.state.viewMode === 'preview') {
+      nextViewMode = 'textures';
+    }
+    else {
+      nextViewMode = this.state.viewMode === 'textures' ? nextViewMode = 'tags' : 'textures';
+    }
+
+    this.setState({
+      viewMode: nextViewMode
+    });
   }
 
   deleteTag = (tag) => {
@@ -131,6 +151,7 @@ export default class Container extends Component {
           tag={tag}
           setFooterText={this.setFooterText}
           filterText={this.state.filterText}
+          onTexturePreview={this.onTexturePreview}
           copyToClipboard={this.copyToClipboard}
         />
       );
@@ -142,28 +163,44 @@ export default class Container extends Component {
       <TagsGrid
         tags={this.state.tags}
         filterText={this.state.filterText}
-        deleteTag={this.deleteTag}/>
+        deleteTag={this.deleteTag}
+        goToTag={this.goToTag}/>
+
+    // 3D Scene
+    let scene = <Scene texture={this.state.texturePreview} style={{ paddingTop: '0' }}/>
 
     let content;
-    if (this.state.viewTextures) {
-      content = noTags ? dragDrop : texturesGrids;
+    switch(this.state.viewMode) {
+
+      case 'textures':
+        content = noTags ? dragDrop : texturesGrids;
+        break;
+
+      case 'tags':
+        content = noTags ? dragDrop : tagsGrid;
+        break;
+
+      default:
+        content = null;
     }
-    else {
-      content = noTags ? dragDrop : tagsGrid;
-    }
+
+    // Search bar
+    const searchBar =
+      <Search
+        filterText={this.state.filterText}
+        setFilterText={this.setFilterText}/>
 
     return(
       <div>
+        { this.state.viewMode === 'preview' ? scene : null }
+        { this.state.viewMode === 'preview' ? null : searchBar }
         <div style={containerStyle}>
-          <Search
-            setFilterText={this.setFilterText}
-            viewTextures={this.state.viewTextures}/>
           {content}
-          <Footer
-            footerText={this.state.footerText}
-            toggleViewMode={this.toggleViewMode}
-            viewTextures={this.state.viewTextures}/>
         </div>
+        <Footer
+          footerText={this.state.footerText}
+          toggleViewMode={this.toggleViewMode}
+          viewMode={this.state.viewMode}/>
       </div>
     );
   }
@@ -173,7 +210,7 @@ const containerStyle = {
   width: '100%',
   height: '100%',
   paddingTop: '40px',
-  paddingBottom: '40px'
+  paddingBottom: '50px'
 }
 
 const dragDropStyle = {

@@ -20,11 +20,11 @@ export default class Item extends Component {
   }
 
   onClickPreview = (e) => {
-      // TODO
+    this.props.onTexturePreview(this.props.path);
   }
 
   onClickClipboard = (e) => {
-    this.props.copyToClipboard(this.props.name);
+    this.props.copyToClipboard(this.props.path);
   }
 
   render() {

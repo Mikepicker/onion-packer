@@ -3,7 +3,24 @@ import React, { Component } from 'react';
 export default class Footer extends Component {
   render() {
 
-    let viewModeButtonClass = this.props.viewTextures ? 'fa fa-picture-o' : 'fa fa-tags';
+    let viewModeButtonClass;
+    switch(this.props.viewMode) {
+      case 'textures':
+        viewModeButtonClass = 'fa fa-picture-o';
+        break;
+
+      case 'tags':
+        viewModeButtonClass = 'fa fa-tags';
+        break;
+
+      case 'preview':
+        viewModeButtonClass = 'fa fa-times';
+        break;
+
+      default:
+        viewModeButtonClass = 'fa fa-picture-o';
+        break;
+    }
 
     return(
       <div>

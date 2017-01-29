@@ -36,6 +36,7 @@ export default class TexturesGrid extends Component {
             name={col.name}
             path={col.path}
             setFooterText={this.props.setFooterText}
+            onTexturePreview={this.props.onTexturePreview}
             copyToClipboard={this.props.copyToClipboard}/>
         );
       });

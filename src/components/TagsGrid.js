@@ -29,7 +29,7 @@ export default class TagsGrid extends Component {
 
       // Push filtered text only
       if (tag.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1) {
-        filteredTags.push(<Tag key={tag} text={tag} removeTag={() => this.props.deleteTag(tag)}/>);
+        filteredTags.push(<Tag key={tag} text={tag} goToTag={this.props.goToTag} removeTag={() => this.props.deleteTag(tag)}/>);
       }
 
     });
