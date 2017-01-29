@@ -5,7 +5,9 @@ export default class Tag extends Component {
     return(
       <div style={tagStyle}>
         <div style={tagTextStyle}>{this.props.text}</div>
-        <div className="fa fa-times" style={tagDeleteStyle} onClick={() => this.props.removeTag(this.props.text)}/>
+        <div style={tagDeleteStyle}>
+          <div className="fa fa-times" onClick={() => this.props.removeTag(this.props.text)} style={{ cursor: 'pointer' }}/>
+        </div>
       </div>
     );
   }
@@ -23,7 +25,6 @@ const tagDeleteStyle = {
   color: '#636262',
   flex: 1,
   textAlign: 'right',
-  cursor: 'pointer',
   marginLeft: '4px',
   fontSize: '12px'
 }

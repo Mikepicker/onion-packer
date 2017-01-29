@@ -40,7 +40,7 @@ export default class Search extends Component {
 
   render() {
 
-    let placeholder = this.props.viewTextures ? 'Type to filter' : 'Press ENTER to add tag';
+    let placeholder = 'Type to filter';
     let text = this.state.filterText.length > 0 ? this.state.filterText : placeholder;
     let textStyle = this.state.filterText.length > 0 ? filterStyle : placeholderStyle;
 
@@ -58,7 +58,7 @@ const searchStyle = {
   top: 0,
   width: '100%',
   backgroundColor: '#fff',
-  zIndex: 1
+  zIndex: '1'
 }
 
 const filterStyle = {
@@ -80,7 +80,8 @@ const placeholderStyle = {
   fontSize: '20px',
   paddingTop: '20px',
   color: '#a1a1a1',
-  cursor: 'default'
+  cursor: 'default',
+  opacity: '0.5'
 }
 
 const dividerStyle = {
