@@ -20,6 +20,12 @@ export default class Search extends Component {
       this.props.setFilterText(temp);
     }
 
+    // Match Esc
+    else if (e.key === 'Escape') {
+      temp = '';
+      this.props.setFilterText(temp);
+    }
+
     // Match exactly one alphanumeric char
     else if (/^[a-z0-9]$/i.test(e.key) && temp.length < 10) {
       temp += e.key;
@@ -70,7 +76,7 @@ const placeholderStyle = {
   paddingTop: '20px',
   color: '#a1a1a1',
   cursor: 'default',
-  opacity: '0.5'
+  opacity: '0.7'
 }
 
 const dividerStyle = {

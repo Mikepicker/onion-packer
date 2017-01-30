@@ -4,7 +4,9 @@ export default class Tag extends Component {
   render() {
     return(
       <div style={tagStyle}>
-        <div style={tagTextStyle} onClick={() => this.props.goToTag(this.props.text)}>{this.props.text}</div>
+        <div style={tagTextContainerStyle}>
+          <div style={tagTextStyle} onClick={() => this.props.goToTag(this.props.text)}>{this.props.text}</div>
+        </div>
         <div style={tagDeleteStyle}>
           <div className="fa fa-times" onClick={() => this.props.removeTag(this.props.text)} style={{ cursor: 'pointer' }}/>
         </div>
@@ -13,13 +15,17 @@ export default class Tag extends Component {
   }
 }
 
-const tagTextStyle = {
+const tagTextContainerStyle = {
   color: '#636262',
   flex: 2,
   cursor: 'default',
-  textAlign: 'left',
-  fontSize: '12px',
-  cursor: 'pointer'
+  display: 'flex',
+  alignItems: 'flex-start',
+}
+
+const tagTextStyle = {
+  cursor: 'pointer',
+  fontSize: '12px'
 }
 
 const tagDeleteStyle = {

@@ -9,8 +9,8 @@ import Scene from './Scene';
 import fs from 'fs';
 import chokidar from 'chokidar';
 
-// Chokidar file watcher
-let watcher;
+// Chokidar file watchers (tag -> watcher)
+let watchers = {};
 
 export default class Container extends Component {
   constructor(props) {
@@ -29,17 +29,55 @@ export default class Container extends Component {
 
   // Start file watcher
   componentDidMount = () => {
-    watcher = chokidar.watch('', {ignored: /(^|[\/\\])\../});
 
+    // Drag & Drop
+    document.ondragover = (e) => {
+      e.preventDefault()
+    }
+
+    document.ondrop = (e) => {
+      e.preventDefault();
+      let path = e.dataTransfer.files[0].path.replace(/\\/g, '/');
+      this.addWatcher(path);
+    }
+
+    // Set local storage
+    /*localStorage.removeItem('paths');
+    if (!localStorage.getItem('paths')) {
+      localStorage.setItem('paths', JSON.string);
+      console.log(typeof(localStorage.getItem('paths')));
+    }
+
+    // Restore from local storage
+    let paths = localStorage.getItem('paths');
+    console.log(paths);
+    paths.forEach((path) => {
+      this.addWatcher(path);
+    });*/
+  }
+
+  addWatcher = (path) => {
+    let watcher = chokidar.watch(path, {ignored: /(^|[\/\\])\../});
+
+    // Get tag (textures folder)
+    let tag = path.split('/');
+    tag = tag[tag.length-1];
+
+    // Store path
+    /*let paths = localStorage.getItem('paths');
+    let index = paths.indexOf(path);
+    if (index === -1) {
+      paths.push(path);
+      localStorage.setItem('paths', paths);
+    }*/
+
+
+    watcher.on('all', (event, path) => console.log(event, path));
     watcher.on('add', path => {
 
       // Exclude non-images
       if (path.match(/\.(jpeg|jpg|gif|png)$/i) === null)
         return;
-
-      // Get tag (texture folder)
-      let tag = path.split('\\');
-      tag = tag[tag.length-2];
 
       // Push tag
       let tags = this.state.tags;
@@ -47,7 +85,6 @@ export default class Container extends Component {
         tags[tag] = [];
       }
       tags[tag].push(path);
-      console.log(tags);
 
       // Push texture
       let textures = this.state.textures;
@@ -74,16 +111,9 @@ export default class Container extends Component {
       this.setState({ tags: tags, textures: textures });
     });
 
-    // Drag & Drop
-    document.ondragover = (e) => {
-      e.preventDefault()
-    }
-
-    document.ondrop = (e) => {
-      e.preventDefault();
-      let path = e.dataTransfer.files[0].path.replace(/\\/g, '/');
-      watcher.add(path);
-    }
+    // Add watcher
+    console.log(tag);
+    watchers[tag] = watcher;
   }
 
   setFilterText = (input) => {
@@ -95,7 +125,7 @@ export default class Container extends Component {
   }
 
   onTexturePreview = (texturePath) => {
-    this.setState({ viewMode: 'preview', texturePreview: texturePath })
+    this.setState({ viewMode: 'preview', texturePreview: texturePath });
   }
 
   copyToClipboard = (texturePath) => {
@@ -105,6 +135,18 @@ export default class Container extends Component {
 
   goToTag = (tag) => {
     this.setState({ filterText: tag, viewMode: 'textures' });
+  }
+
+  deleteTag = (tag) => {
+
+    // Close and delete watcher
+    watchers[tag].close();
+    delete watchers[tag];
+
+    // Delete tag
+    let temp = this.state.tags;
+    delete temp[tag];
+    this.setState({ tags: temp });
   }
 
   toggleViewMode = () => {
@@ -121,12 +163,6 @@ export default class Container extends Component {
     this.setState({
       viewMode: nextViewMode
     });
-  }
-
-  deleteTag = (tag) => {
-    let temp = this.state.tags;
-    delete temp[tag];
-    this.setState({ tags: temp });
   }
 
   render() {
@@ -221,5 +257,5 @@ const dragDropStyle = {
   fontSize: '25px',
   textAlign: 'center',
   margin: '0 auto',
-  opacity: '0.5'
+  opacity: '0.7'
 }
