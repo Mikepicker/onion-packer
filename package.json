@@ -31,9 +31,11 @@
     "chokidar": "^1.6.1",
     "fs": "0.0.1-security",
     "lodash": "^4.17.4",
+    "ncp": "^2.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-three-renderer": "^3.0.2",
+    "rimraf": "^2.5.4",
     "three": "^0.82.1",
     "vue": "^2.1.10"
   }

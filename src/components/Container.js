@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { clipboard, nativeImage } from 'electron';
-import path from 'path';
+import pathlib from 'path';
 import Search from './Search';
 import TexturesGrid from './TexturesGrid';
 import TagsGrid from './TagsGrid';
@@ -8,6 +8,10 @@ import Footer from './Footer';
 import Scene from './Scene';
 import fs from 'fs';
 import chokidar from 'chokidar';
+import ncp from 'ncp';
+import rimraf from 'rimraf';
+
+const TEXTURES_PATH = './textures';
 
 // Chokidar file watchers (tag -> watcher)
 let watchers = {};
@@ -30,6 +34,11 @@ export default class Container extends Component {
   // Start file watcher
   componentDidMount = () => {
 
+    // Create local textures directory if not exists
+    if (!fs.existsSync(TEXTURES_PATH)) {
+      fs.mkdirSync(TEXTURES_PATH);
+    }
+
     // Drag & Drop
     document.ondragover = (e) => {
       e.preventDefault()
@@ -38,41 +47,53 @@ export default class Container extends Component {
     document.ondrop = (e) => {
       e.preventDefault();
       let path = e.dataTransfer.files[0].path.replace(/\\/g, '/');
-      this.addWatcher(path);
+
+      // Get tag (textures folder)
+      let tag = pathlib.parse(path).name;
+
+      // Do not add if tag already exists
+      if (this.state.tags[tag]) {
+        return;
+      }
+
+      // Clone directory
+      ncp(path, pathlib.join(TEXTURES_PATH, tag), (err) => {
+        if (err) {
+          return console.error(err);
+        }
+        else {
+
+          // Add watcher
+          this.addWatcher(pathlib.join(TEXTURES_PATH, tag));
+        }
+      })
     }
 
-    // Set local storage
-    /*localStorage.removeItem('paths');
-    if (!localStorage.getItem('paths')) {
-      localStorage.setItem('paths', JSON.string);
-      console.log(typeof(localStorage.getItem('paths')));
+    let getDirectories = (srcpath) => {
+      return fs.readdirSync(srcpath)
+        .filter(file => fs.statSync(pathlib.join(srcpath, file)).isDirectory())
     }
 
-    // Restore from local storage
-    let paths = localStorage.getItem('paths');
-    console.log(paths);
-    paths.forEach((path) => {
+    getDirectories(TEXTURES_PATH).forEach((path) => {
       this.addWatcher(path);
-    });*/
+    });
   }
 
   addWatcher = (path) => {
     let watcher = chokidar.watch(path, {ignored: /(^|[\/\\])\../});
 
     // Get tag (textures folder)
-    let tag = path.split('/');
-    tag = tag[tag.length-1];
+    let tag = pathlib.parse(path).name;
 
     // Store path
-    /*let paths = localStorage.getItem('paths');
+    let paths = JSON.parse(localStorage.getItem('paths'));
     let index = paths.indexOf(path);
     if (index === -1) {
       paths.push(path);
-      localStorage.setItem('paths', paths);
-    }*/
+      localStorage.setItem('paths', JSON.stringify(paths));
+    }
 
-
-    watcher.on('all', (event, path) => console.log(event, path));
+    //watcher.on('all', (event, path) => console.log(event, path));
     watcher.on('add', path => {
 
       // Exclude non-images
@@ -112,7 +133,6 @@ export default class Container extends Component {
     });
 
     // Add watcher
-    console.log(tag);
     watchers[tag] = watcher;
   }
 
@@ -147,6 +167,18 @@ export default class Container extends Component {
     let temp = this.state.tags;
     delete temp[tag];
     this.setState({ tags: temp });
+
+    // Delete textures associated to tag
+    let textures = this.state.textures;
+    textures.forEach((texture) => {
+      if (texture.tag === tag) {
+        textures.splice(textures.indexOf(texture), 1);
+        this.setState({ textures: textures });
+      }
+    });
+
+    // Remove directory
+    rimraf(pathlib.join(TEXTURES_PATH, tag), (err) => console.log(err));
   }
 
   toggleViewMode = () => {

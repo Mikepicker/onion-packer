@@ -20,7 +20,7 @@ export default class Scene extends React.Component {
       this.setState({
         cubeRotation: new THREE.Euler(
           this.state.cubeRotation.x + 0.01,
-          this.state.cubeRotation.y + 0.01,
+          this.state.cubeRotation.y + 0.001,
           0
         ),
       });
