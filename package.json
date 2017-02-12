@@ -23,7 +23,7 @@
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-2": "^6.22.0",
-    "electron": "^1.4.1",
+    "electron": "^1.4.15",
     "webpack": "^1.14.0"
   },
   "dependencies": {
@@ -36,7 +36,6 @@
     "react-dom": "^15.4.2",
     "react-three-renderer": "^3.0.2",
     "rimraf": "^2.5.4",
-    "three": "^0.82.1",
-    "vue": "^2.1.10"
+    "three": "^0.82.1"
   }
 }

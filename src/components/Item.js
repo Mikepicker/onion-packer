@@ -5,7 +5,8 @@ export default class Item extends Component {
       super(props);
 
       this.state = {
-        'hover': false
+        'hover': false,
+        'selected': false
       }
   }
 
@@ -19,11 +20,20 @@ export default class Item extends Component {
     this.props.setFooterText('');
   }
 
+  toggleSelected = () => {
+    this.props.selectTexture(this.props.name);
+    this.setState((prevState) => ({
+      selected: !prevState.selected
+    }));
+  }
+
   onClickPreview = (e) => {
+    e.preventDefault();
     this.props.onTexturePreview(this.props.path);
   }
 
   onClickClipboard = (e) => {
+    e.preventDefault();
     this.props.copyToClipboard(this.props.path);
   }
 
@@ -38,6 +48,14 @@ export default class Item extends Component {
         </div>
     }
 
+    let imgStyle = itemStyle;
+    if (this.state.hover) {
+      imgStyle = hoverStyle;
+    }
+    else if (this.state.selected) {
+      imgStyle = selectedStyle;
+    }
+
     return(
       <div
         className="col-xs-3 col-sm-3 col-md-3 col-lg-3"
@@ -47,7 +65,8 @@ export default class Item extends Component {
           className="img-responsive img-rounded"
           src={this.props.path}
           alt=""
-          style={this.state.hover ? hoverStyle : itemStyle}/>
+          style={imgStyle}
+          onClick={this.toggleSelected}/>
         {hoverMenu}
       </div>
     );
@@ -64,6 +83,13 @@ const hoverStyle = {
   height: '64px',
   border: '2px',
   boxShadow: '0px 0px 20px 0px rgba(0, 0, 0, 0.6)'
+}
+
+const selectedStyle = {
+  width: '64px',
+  height: '64px',
+  border: '2px',
+  boxShadow: '0px 0px 30px 0px rgba(26, 189, 0, 1)'
 }
 
 const hoverMenuStyle = {

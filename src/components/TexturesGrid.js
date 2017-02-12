@@ -12,11 +12,11 @@ export default class TexturesGrid extends Component {
     this.props.textures.forEach((texture) => {
 
       // Push filtered text only
-      let textureName = texture.replace(/^.*[\\\/]/, '').toLowerCase();
+      let textureName = texture.path.replace(/^.*[\\\/]/, '').toLowerCase();
 
       if (textureName.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1 ||
           this.props.tag.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1) {
-        filteredRows.push({ name: textureName, path: texture });
+        filteredRows.push({ name: textureName, path: texture.path });
       }
 
     });
@@ -37,7 +37,9 @@ export default class TexturesGrid extends Component {
             path={col.path}
             setFooterText={this.props.setFooterText}
             onTexturePreview={this.props.onTexturePreview}
-            copyToClipboard={this.props.copyToClipboard}/>
+            copyToClipboard={this.props.copyToClipboard}
+            selectTexture={this.props.selectTexture}
+            deselectTexture={this.props.deselectTexture}/>
         );
       });
 

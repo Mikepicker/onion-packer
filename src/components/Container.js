@@ -22,11 +22,12 @@ export default class Container extends Component {
 
     this.state = {
       tags: {},
-      textures: [],
+      textures: {},
       footerText: '',
       filterText: '',
       viewMode: 'textures', // textures, tags, preview
-      texturePreview: null
+      texturePreview: null,
+      selectedTextures: []
     }
 
   }
@@ -69,13 +70,14 @@ export default class Container extends Component {
       })
     }
 
+    // Load all textures in fs
     let getDirectories = (srcpath) => {
       return fs.readdirSync(srcpath)
         .filter(file => fs.statSync(pathlib.join(srcpath, file)).isDirectory())
     }
 
     getDirectories(TEXTURES_PATH).forEach((path) => {
-      this.addWatcher(path);
+      this.addWatcher(pathlib.join(TEXTURES_PATH,path));
     });
   }
 
@@ -85,49 +87,42 @@ export default class Container extends Component {
     // Get tag (textures folder)
     let tag = pathlib.parse(path).name;
 
-    // Store path
-    let paths = JSON.parse(localStorage.getItem('paths'));
-    let index = paths.indexOf(path);
-    if (index === -1) {
-      paths.push(path);
-      localStorage.setItem('paths', JSON.stringify(paths));
-    }
-
-    //watcher.on('all', (event, path) => console.log(event, path));
+    watcher.on('all', (event, path) => console.log(event, path));
     watcher.on('add', path => {
 
       // Exclude non-images
       if (path.match(/\.(jpeg|jpg|gif|png)$/i) === null)
         return;
 
+      // Texture Name
+      let texture = pathlib.parse(path).name;
+
+      // Push texture
+      let textures = this.state.textures;
+      textures[texture] = { path: path, tag: tag };
+
       // Push tag
       let tags = this.state.tags;
       if (!tags[tag]) {
         tags[tag] = [];
       }
-      tags[tag].push(path);
-
-      // Push texture
-      let textures = this.state.textures;
-      textures.push({ path: path, tag: tag });
+      tags[tag].push(textures[texture]);
 
       // Set state
       this.setState({ tags: tags, textures: textures });
     });
 
     watcher.on('unlink', path => {
+      let texture = pathlib.parse(path).name;
       let textures = this.state.textures;
-      var index = textures.indexOf(path);
 
-      if (index > -1) {
+      // Remove from tags
+      let tags = this.state.tags;
+      tags[textures[texture].tag].splice(tags[textures[texture].tag].indexOf(textures[texture]), 1);
 
-        // Remove from tags
-        let tags = this.state.tags;
-        tags[textures[index].tag].splice(textures[index].indexOf(path), 1);
-
-        // Remove from textures
-        textures.splice(index, 1);
-      }
+      // Remove from textures
+      delete textures[texture];
+      console.log(textures);
 
       this.setState({ tags: tags, textures: textures });
     });
@@ -149,7 +144,9 @@ export default class Container extends Component {
   }
 
   copyToClipboard = (texturePath) => {
-    clipboard.writeImage(nativeImage.createFromPath(texturePath));
+    //clipboard.writeText(texturePath);
+    let img = nativeImage.createFromPath(texturePath);
+    clipboard.writeImage(img);
     this.setState({ footerText: 'Copied to clipboard!' });
   }
 
@@ -170,15 +167,31 @@ export default class Container extends Component {
 
     // Delete textures associated to tag
     let textures = this.state.textures;
-    textures.forEach((texture) => {
+    Object.keys(textures).forEach((texture) => {
       if (texture.tag === tag) {
-        textures.splice(textures.indexOf(texture), 1);
-        this.setState({ textures: textures });
+        delete textures[texture];
       }
     });
 
+    this.setState({ textures: textures });
+
     // Remove directory
     rimraf(pathlib.join(TEXTURES_PATH, tag), (err) => console.log(err));
+  }
+
+  // Select Texture
+  selectTexture = (texture) => {
+    console.log(texture);
+    let selectedTextures = this.state.selectedTextures;
+    selectedTextures.push(texture);
+    this.setState({ selectedTextures: selectedTextures });
+  }
+
+  // Deselect Texture
+  deselectTexture = (texture) => {
+    let selectedTextures = this.state.selectedTextures;
+    selectedTextures.splice(selectedTextures.indexOf(texture));
+    this.setState({ selectedTextures: selectedTextures });
   }
 
   toggleViewMode = () => {
@@ -221,6 +234,8 @@ export default class Container extends Component {
           filterText={this.state.filterText}
           onTexturePreview={this.onTexturePreview}
           copyToClipboard={this.copyToClipboard}
+          selectTexture={this.selectTexture}
+          deselectTexture={this.deselectTexture}
         />
       );
 
