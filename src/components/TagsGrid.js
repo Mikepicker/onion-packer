@@ -3,7 +3,7 @@ import Tag from './Tag';
 
 export default class TagsGrid extends Component {
 
-  /*componentWillMount = () => {
+  componentWillMount = () => {
     document.addEventListener('keyup', this.onKeyUp, false);
   }
 
@@ -13,14 +13,11 @@ export default class TagsGrid extends Component {
 
   onKeyUp = (e) => {
 
-    let temp = this.state.tags;
-
-    // ENTER
-    if (e.key === 'Enter' && this.props.filterText.length > 0 && temp.indexOf(this.props.filterText) === -1) {
-      temp.push(this.props.filterText);
-      this.setState({ tags: temp });
+    // ENTER to add
+    if (e.key === 'Enter' && this.props.filterText.length > 0) {
+      this.props.addTag(this.props.filterText);
     }
-  }*/
+  }
 
   render() {
 

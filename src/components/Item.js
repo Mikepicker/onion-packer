@@ -5,8 +5,7 @@ export default class Item extends Component {
       super(props);
 
       this.state = {
-        'hover': false,
-        'selected': false
+        'hover': false
       }
   }
 
@@ -21,10 +20,13 @@ export default class Item extends Component {
   }
 
   toggleSelected = () => {
-    this.props.selectTexture(this.props.name);
-    this.setState((prevState) => ({
-      selected: !prevState.selected
-    }));
+
+    if (!this.props.selected) {
+      this.props.selectTexture(this.props.texture);
+    }
+    else {
+      this.props.deselectTexture(this.props.texture);
+    }
   }
 
   onClickPreview = (e) => {
@@ -49,12 +51,13 @@ export default class Item extends Component {
     }
 
     let imgStyle = itemStyle;
-    if (this.state.hover) {
-      imgStyle = hoverStyle;
-    }
-    else if (this.state.selected) {
+    if (this.props.selected) {
       imgStyle = selectedStyle;
     }
+    else if (this.state.hover) {
+      imgStyle = hoverStyle;
+    }
+
 
     return(
       <div

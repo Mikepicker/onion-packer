@@ -21,13 +21,13 @@ export default class Container extends Component {
     super(props);
 
     this.state = {
-      tags: {},
-      textures: {},
+      tags: {},             // { texture }
+      textures: {},         // { path, tag }
       footerText: '',
       filterText: '',
       viewMode: 'textures', // textures, tags, preview
       texturePreview: null,
-      selectedTextures: []
+      selectedTextures: {}
     }
 
   }
@@ -39,6 +39,9 @@ export default class Container extends Component {
     if (!fs.existsSync(TEXTURES_PATH)) {
       fs.mkdirSync(TEXTURES_PATH);
     }
+
+    // Add watcher for textures folder
+    this.addWatcher(TEXTURES_PATH);
 
     // Drag & Drop
     document.ondragover = (e) => {
@@ -94,19 +97,16 @@ export default class Container extends Component {
       if (path.match(/\.(jpeg|jpg|gif|png)$/i) === null)
         return;
 
-      // Texture Name
-      let texture = pathlib.parse(path).name;
-
       // Push texture
       let textures = this.state.textures;
-      textures[texture] = { path: path, tag: tag };
+      textures[path] = { path: path, tag: tag, name: pathlib.parse(path).name };
 
       // Push tag
       let tags = this.state.tags;
       if (!tags[tag]) {
         tags[tag] = [];
       }
-      tags[tag].push(textures[texture]);
+      tags[tag].push(textures[path]);
 
       // Set state
       this.setState({ tags: tags, textures: textures });
@@ -135,8 +135,13 @@ export default class Container extends Component {
     this.setState({ filterText: input });
   }
 
-  setFooterText = (texture) => {
-    this.setState({ footerText: texture });
+  setFooterText = (text) => {
+
+    if (text.length === 0 && Object.keys(this.state.selectedTextures).length > 0) {
+      text = Object.keys(this.state.selectedTextures).length + ' selected';
+    }
+
+    this.setState({ footerText: text });
   }
 
   onTexturePreview = (texturePath) => {
@@ -152,6 +157,21 @@ export default class Container extends Component {
 
   goToTag = (tag) => {
     this.setState({ filterText: tag, viewMode: 'textures' });
+  }
+
+  addTag = (tag) => {
+
+    if (this.state.tags[tag] === undefined) {
+
+      // Create Folder
+      fs.mkdirSync(TEXTURES_PATH + '/' + tag);
+
+      // Store new tag
+      let temp = this.state.tags;
+      temp[tag] = tag;
+
+      this.setState({ tags: temp });
+    }
   }
 
   deleteTag = (tag) => {
@@ -181,17 +201,27 @@ export default class Container extends Component {
 
   // Select Texture
   selectTexture = (texture) => {
-    console.log(texture);
     let selectedTextures = this.state.selectedTextures;
-    selectedTextures.push(texture);
+    selectedTextures[texture.path] = texture;
     this.setState({ selectedTextures: selectedTextures });
+
+    // Set text
+    this.setFooterText(Object.keys(selectedTextures).length + ' selected');
   }
 
   // Deselect Texture
   deselectTexture = (texture) => {
     let selectedTextures = this.state.selectedTextures;
-    selectedTextures.splice(selectedTextures.indexOf(texture));
+    delete selectedTextures[texture.path];
     this.setState({ selectedTextures: selectedTextures });
+
+    // Set text
+    this.setFooterText(Object.keys(selectedTextures).length + ' selected');
+  }
+
+  // Deselect All Textures
+  deselectAllTextures = () => {
+    this.setState({ selectedTextures: {}, footerText: '' });
   }
 
   toggleViewMode = () => {
@@ -225,11 +255,14 @@ export default class Container extends Component {
     let texturesGrids = [];
     Object.keys(this.state.tags).forEach((tag) => {
 
+      const textures = this.state.tags[tag];
+
       texturesGrids.push(
         <TexturesGrid
           key={tag}
-          textures={this.state.tags[tag]}
+          textures={textures}
           tag={tag}
+          selectedTextures={this.state.selectedTextures}
           setFooterText={this.setFooterText}
           filterText={this.state.filterText}
           onTexturePreview={this.onTexturePreview}
@@ -246,6 +279,7 @@ export default class Container extends Component {
       <TagsGrid
         tags={this.state.tags}
         filterText={this.state.filterText}
+        addTag={this.addTag}
         deleteTag={this.deleteTag}
         goToTag={this.goToTag}/>
 
@@ -283,7 +317,9 @@ export default class Container extends Component {
         <Footer
           footerText={this.state.footerText}
           toggleViewMode={this.toggleViewMode}
-          viewMode={this.state.viewMode}/>
+          viewMode={this.state.viewMode}
+          showTextureOptions={Object.keys(this.state.selectedTextures).length > 0}
+          deselectAllTextures={this.deselectAllTextures}/>
       </div>
     );
   }

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 export default class Footer extends Component {
+
+
   render() {
 
     let viewModeButtonClass;
@@ -22,12 +24,17 @@ export default class Footer extends Component {
         break;
     }
 
+    let deselectOption = <div style={{ flex: 1 }}/>;
+    if (this.props.showTextureOptions) {
+      deselectOption = <div className='fa fa-times' style={deselectOptionStyle} onClick={this.props.deselectAllTextures}/>
+    }
+
     return(
       <div>
         <div style={footerStyle}>
           <div className={viewModeButtonClass} style={viewModeButtonStyle} onClick={this.props.toggleViewMode}/>
           <div style={descrStyle}>{this.props.footerText}</div>
-          <div style={{ flex: 1 }}/>
+          {deselectOption}
         </div>
         <div style={creditsStyle}>Made with <div className='fa fa-heart' style={{ color: '#ff6f6f'}}/> by Michele Rullo & Andrea Cipollone</div>
       </div>
@@ -80,4 +87,11 @@ const viewModeButtonStyle = {
   flex: '1',
   color: '#fff',
   cursor: 'pointer'
+}
+
+const deselectOptionStyle = {
+  flex: '1',
+  color: '#fff',
+  cursor: 'pointer',
+  textAlign: 'end'
 }

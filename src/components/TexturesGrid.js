@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Item from './Item';
 import { chunk } from 'lodash';
+import pathlib from 'path';
 
 const CHUNKS = 4;
 
@@ -12,11 +13,9 @@ export default class TexturesGrid extends Component {
     this.props.textures.forEach((texture) => {
 
       // Push filtered text only
-      let textureName = texture.path.replace(/^.*[\\\/]/, '').toLowerCase();
-
-      if (textureName.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1 ||
+      if (texture.name.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1 ||
           this.props.tag.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1) {
-        filteredRows.push({ name: textureName, path: texture.path });
+        filteredRows.push(texture);
       }
 
     });
@@ -32,9 +31,11 @@ export default class TexturesGrid extends Component {
       row.forEach((col) => {
         reactCol.push(
           <Item
-            key={col.name}
+            key={col.path}
+            texture={col}
             name={col.name}
             path={col.path}
+            selected={col.path in this.props.selectedTextures}
             setFooterText={this.props.setFooterText}
             onTexturePreview={this.props.onTexturePreview}
             copyToClipboard={this.props.copyToClipboard}
