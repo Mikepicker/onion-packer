@@ -24,17 +24,32 @@ export default class Footer extends Component {
         break;
     }
 
-    let deselectOption = <div style={{ flex: 1 }}/>;
+    // View Mode Button (left)
+    let viewModeButton =
+      <div style={viewModeButtonContainer}>
+        <div className={viewModeButtonClass} style={viewModeButtonStyle} onClick={this.props.toggleViewMode}/>
+      </div>
+
+    // Option Buttons (right)
+    let optionButtons = <div style={optionsStyle}/>;
     if (this.props.showTextureOptions) {
-      deselectOption = <div className='fa fa-times' style={deselectOptionStyle} onClick={this.props.deselectAllTextures}/>
+      optionButtons =
+        <div style={optionsStyle}>
+          <div>
+            <div className='fa fa-trash-o' style={optionIconStyle} onClick={this.props.deleteSelectedTags}/>
+          </div>
+          <div>
+            <div className='fa fa-times' style={optionIconStyle} onClick={this.props.deselectAllTextures}/>
+          </div>
+        </div>
     }
 
     return(
       <div>
         <div style={footerStyle}>
-          <div className={viewModeButtonClass} style={viewModeButtonStyle} onClick={this.props.toggleViewMode}/>
+          {viewModeButton}
           <div style={descrStyle}>{this.props.footerText}</div>
-          {deselectOption}
+          {optionButtons}
         </div>
         <div style={creditsStyle}>Made with <div className='fa fa-heart' style={{ color: '#ff6f6f'}}/> by Michele Rullo & Andrea Cipollone</div>
       </div>
@@ -53,13 +68,6 @@ const footerStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'center'
-}
-
-const resizerStyle = {
-  fontSize: '12px',
-  color: '#fff',
-  cursor: 'pointer',
-  flex: '1'
 }
 
 const descrStyle = {
@@ -83,15 +91,32 @@ const creditsStyle = {
   textAlign: 'center'
 }
 
+const viewModeButtonContainer = {
+  flex: '1'
+}
+
 const viewModeButtonStyle = {
-  flex: '1',
   color: '#fff',
   cursor: 'pointer'
 }
 
-const deselectOptionStyle = {
+const optionsStyle = {
   flex: '1',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'flex-end'
+}
+
+const optionStyle = {
+  flex: '1',
+  textAlign: 'right',
+  backgroundColor: 'rgb(209, 130, 62)'
+}
+
+const optionIconStyle = {
   color: '#fff',
   cursor: 'pointer',
-  textAlign: 'end'
+  textAlign: 'right',
+  marginLeft: '16px'
 }

@@ -10,6 +10,7 @@ export default class TexturesGrid extends Component {
 
     // Filtered textures
     let filteredRows = [];
+
     this.props.textures.forEach((texture) => {
 
       // Push filtered text only
@@ -31,7 +32,7 @@ export default class TexturesGrid extends Component {
       row.forEach((col) => {
         reactCol.push(
           <Item
-            key={col.path}
+            key={col.id}
             texture={col}
             name={col.name}
             path={col.path}

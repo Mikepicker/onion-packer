@@ -97,9 +97,14 @@ export default class Container extends Component {
       if (path.match(/\.(jpeg|jpg|gif|png)$/i) === null)
         return;
 
+      // Skip if already existing
+      if (this.state.textures[path] != undefined) {
+        return;
+      }
+
       // Push texture
       let textures = this.state.textures;
-      textures[path] = { path: path, tag: tag, name: pathlib.parse(path).name };
+      textures[path] = { id: Object.keys(this.state.textures).length, path: path, tag: tag, name: pathlib.parse(path).name, ext: path.split('.').pop() };
 
       // Push tag
       let tags = this.state.tags;
@@ -113,16 +118,15 @@ export default class Container extends Component {
     });
 
     watcher.on('unlink', path => {
-      let texture = pathlib.parse(path).name;
       let textures = this.state.textures;
 
       // Remove from tags
       let tags = this.state.tags;
-      tags[textures[texture].tag].splice(tags[textures[texture].tag].indexOf(textures[texture]), 1);
+      const texture = textures[path];
+      tags[texture.tag].splice(tags[texture.tag].indexOf(texture), 1);
 
       // Remove from textures
-      delete textures[texture];
-      console.log(textures);
+      delete textures[path];
 
       this.setState({ tags: tags, textures: textures });
     });
@@ -164,13 +168,19 @@ export default class Container extends Component {
     if (this.state.tags[tag] === undefined) {
 
       // Create Folder
-      fs.mkdirSync(TEXTURES_PATH + '/' + tag);
+      const path = pathlib.join(TEXTURES_PATH, tag);
+      if (!fs.existsSync(path)) {
+        fs.mkdirSync(path);
+      }
 
       // Store new tag
       let temp = this.state.tags;
-      temp[tag] = tag;
+      temp[tag] = [];
 
       this.setState({ tags: temp });
+
+      // Add watcher
+      this.addWatcher(path);
     }
   }
 
@@ -224,6 +234,34 @@ export default class Container extends Component {
     this.setState({ selectedTextures: {}, footerText: '' });
   }
 
+  // Delete Selected Tags
+  deleteSelectedTags = () => {
+
+    Object.keys(this.state.selectedTextures).forEach((key) => {
+
+      // Delete selected texture
+      const selectedTexture = this.state.selectedTextures[key];
+      fs.unlinkSync(selectedTexture.path);
+    });
+
+    this.deselectAllTextures();
+  }
+
+  // Assign texture(s) to tag
+  assignTexturesToTag = (tag) => {
+
+    Object.keys(this.state.selectedTextures).forEach((key) => {
+
+      // Move selected texture to new path
+      const selectedTexture = this.state.selectedTextures[key];
+      fs.renameSync(selectedTexture.path, pathlib.join(TEXTURES_PATH, tag, selectedTexture.name + '.' + selectedTexture.ext));
+      console.log(this.state.selectedTextures);
+    });
+
+    this.deselectAllTextures();
+    this.setState({ viewMode: 'textures' });
+  }
+
   toggleViewMode = () => {
 
     let nextViewMode;
@@ -232,7 +270,7 @@ export default class Container extends Component {
       nextViewMode = 'textures';
     }
     else {
-      nextViewMode = this.state.viewMode === 'textures' ? nextViewMode = 'tags' : 'textures';
+      nextViewMode = this.state.viewMode === 'textures' ? 'tags' : 'textures';
     }
 
     this.setState({
@@ -275,13 +313,14 @@ export default class Container extends Component {
     });
 
     // Tags Grid
+    let onClickTag = Object.keys(this.state.selectedTextures).length > 0 ? this.assignTexturesToTag : this.goToTag;
     const tagsGrid =
       <TagsGrid
         tags={this.state.tags}
         filterText={this.state.filterText}
         addTag={this.addTag}
         deleteTag={this.deleteTag}
-        goToTag={this.goToTag}/>
+        onClickTag={onClickTag}/>
 
     // 3D Scene
     let scene = <Scene texture={this.state.texturePreview} style={{ paddingTop: '0' }}/>
@@ -319,7 +358,8 @@ export default class Container extends Component {
           toggleViewMode={this.toggleViewMode}
           viewMode={this.state.viewMode}
           showTextureOptions={Object.keys(this.state.selectedTextures).length > 0}
-          deselectAllTextures={this.deselectAllTextures}/>
+          deselectAllTextures={this.deselectAllTextures}
+          deleteSelectedTags={this.deleteSelectedTags}/>
       </div>
     );
   }
