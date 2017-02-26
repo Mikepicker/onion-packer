@@ -22,7 +22,7 @@ export default class TagsGrid extends Component {
   render() {
 
     let filteredTags = [];
-    Object.keys(this.props.tags).forEach((tag) => {
+    Object.keys(this.props.tags).sort().forEach((tag) => {
 
       // Push filtered text only
       if (tag.toLowerCase().indexOf(this.props.filterText.toLowerCase()) !== -1) {
@@ -30,6 +30,7 @@ export default class TagsGrid extends Component {
           <Tag
             key={tag}
             text={tag}
+            size={this.props.tags[tag].length}
             onClickTag={this.props.onClickTag}
             removeTag={() => this.props.deleteTag(tag)}
             assignTexturesToTag={this.props.assignTexturesToTag}/>

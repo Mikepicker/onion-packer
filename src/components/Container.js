@@ -291,7 +291,7 @@ export default class Container extends Component {
 
     // Grids
     let texturesGrids = [];
-    Object.keys(this.state.tags).forEach((tag) => {
+    Object.keys(this.state.tags).sort().forEach((tag) => {
 
       const textures = this.state.tags[tag];
 

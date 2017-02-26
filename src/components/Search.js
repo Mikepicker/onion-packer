@@ -53,7 +53,8 @@ const searchStyle = {
   top: 0,
   width: '100%',
   backgroundColor: '#fff',
-  zIndex: '1'
+  zIndex: '1',
+  webkitAppRegion: 'drag'
 }
 
 const filterStyle = {

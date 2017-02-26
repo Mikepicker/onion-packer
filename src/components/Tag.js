@@ -5,7 +5,7 @@ export default class Tag extends Component {
     return(
       <div style={tagStyle}>
         <div style={tagTextContainerStyle}>
-          <div style={tagTextStyle} onClick={() => this.props.onClickTag(this.props.text)}>{this.props.text}</div>
+          <div style={tagTextStyle} onClick={() => this.props.onClickTag(this.props.text)}>{this.props.text + ' (' + this.props.size + ')'}</div>
         </div>
         <div style={tagDeleteStyle}>
           <div className="fa fa-times" onClick={() => this.props.removeTag(this.props.text)} style={{ cursor: 'pointer' }}/>
