@@ -27,6 +27,18 @@ export default class Scene extends React.Component {
     };
   }
 
+  scrollHandler = (e) => {
+    e.preventDefault();
+  }
+
+  componentDidMount = () => {
+    window.onwheel = this.scrollHandler;
+  }
+
+  componentWillUnmount = () => {
+    window.onwheel = null;
+  }
+
   render() {
     const width = window.innerWidth; // canvas width
     const height = window.innerHeight-40; // canvas height

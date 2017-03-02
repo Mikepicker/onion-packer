@@ -251,7 +251,7 @@ export default class Container extends Component {
   // Rename Selected Texture
   toggleRename = () => {
     this.setState({
-      renameSelectedTexture: !this.state.renameSelectedTexture
+      renameSelectedTexture: !this.state.renameSelectedTexture,
       viewMode: 'textures'
     });
   }
