@@ -12,10 +12,10 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: false, maximizable: false });
+  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: true, maximizable: false });
 
   // Hide Menu
-  mainWindow.setMenu(null);
+  //mainWindow.setMenu(null);
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({

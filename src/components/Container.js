@@ -27,7 +27,8 @@ export default class Container extends Component {
       filterText: '',
       viewMode: 'textures', // textures, tags, preview
       texturePreview: null,
-      selectedTextures: {}
+      selectedTextures: {},
+      renameSelectedTexture: false
     }
 
   }
@@ -247,6 +248,14 @@ export default class Container extends Component {
     this.deselectAllTextures();
   }
 
+  // Rename Selected Texture
+  toggleRename = () => {
+    this.setState({
+      renameSelectedTexture: !this.state.renameSelectedTexture
+      viewMode: 'textures'
+    });
+  }
+
   // Assign texture(s) to tag
   assignTexturesToTag = (tag) => {
 
@@ -340,9 +349,22 @@ export default class Container extends Component {
         content = null;
     }
 
+    // Search bar placeholder
+    let placeholder = '';
+    if (this.state.renameSelectedTexture) {
+      placeholder = 'Enter to rename';
+    }
+    else if (this.state.viewMode === 'textures') {
+      placeholder = 'Type to filter';
+    }
+    else if (this.state.viewMode === 'tags') {
+      placeholder = 'Enter to add';
+    }
+
     // Search bar
     const searchBar =
       <Search
+        placeholder={placeholder}
         filterText={this.state.filterText}
         setFilterText={this.setFilterText}/>
 
@@ -359,7 +381,9 @@ export default class Container extends Component {
           viewMode={this.state.viewMode}
           showTextureOptions={Object.keys(this.state.selectedTextures).length > 0}
           deselectAllTextures={this.deselectAllTextures}
-          deleteSelectedTags={this.deleteSelectedTags}/>
+          deleteSelectedTags={this.deleteSelectedTags}
+          toggleRename={this.toggleRename}
+          renameSelectedTexture={this.state.renameSelectedTexture}/>
       </div>
     );
   }

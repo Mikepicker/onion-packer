@@ -27,7 +27,7 @@ export default class Footer extends Component {
     // View Mode Button (left)
     let viewModeButton =
       <div style={viewModeButtonContainer}>
-        <div className={viewModeButtonClass} style={viewModeButtonStyle} onClick={this.props.toggleViewMode}/>
+        {this.props.renameSelectedTexture ? null : <div className={viewModeButtonClass} style={viewModeButtonStyle} onClick={this.props.toggleViewMode}/>}
       </div>
 
     // Option Buttons (right)
@@ -35,7 +35,10 @@ export default class Footer extends Component {
     if (this.props.showTextureOptions) {
       optionButtons =
         <div style={optionsStyle}>
-          <div>
+          <div style={{ display: this.props.renameSelectedTexture ? 'none' : '' }}>
+            <div className='fa fa-pencil' style={optionIconStyle} onClick={this.props.toggleRename}/>
+          </div>
+          <div style={{ display: this.props.renameSelectedTexture ? 'none' : '' }}>
             <div className='fa fa-trash-o' style={optionIconStyle} onClick={this.props.deleteSelectedTags}/>
           </div>
           <div>

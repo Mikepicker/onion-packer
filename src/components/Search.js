@@ -35,8 +35,7 @@ export default class Search extends Component {
 
   render() {
 
-    let placeholder = 'Type to filter';
-    let text = this.props.filterText.length > 0 ? this.props.filterText : placeholder;
+    let text = this.props.filterText.length > 0 ? this.props.filterText : this.props.placeholder;
     let textStyle = this.props.filterText.length > 0 ? filterStyle : placeholderStyle;
 
     return(
