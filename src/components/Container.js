@@ -118,7 +118,7 @@ export default class Container extends Component {
     // Get tag (textures folder)
     let tag = pathlib.basename(path);
 
-    watcher.on('all', (event, path) => console.log(event, path));
+    //watcher.on('all', (event, path) => console.log(event, path));
     watcher.on('add', path => {
 
       let parentFolder = pathlib.dirname(path).split(pathlib.sep).pop();
@@ -273,6 +273,11 @@ export default class Container extends Component {
     shell.openItem(pathlib.join(__dirname, '..', '..', this.state.texturePreview.path));
   }
 
+  // Close onion packer
+  powerOff = () => {
+    window.close();
+  }
+
   //------------------------------TAGS MANAGEMENT------------------------------\\
   addTag = (tag) => {
 
@@ -417,7 +422,8 @@ export default class Container extends Component {
       <Search
         placeholder={placeholder}
         filterText={this.state.filterText}
-        setFilterText={this.setFilterText}/>
+        setFilterText={this.setFilterText}
+        powerOff={this.powerOff}/>
 
     // Footer Cancel Action
     let footerCancelAction;

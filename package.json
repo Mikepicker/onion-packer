@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "OnionPacker",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Texture & Images Organizer",
   "main": "main.js",
   "scripts": {
     "babel": "./node_modules/.bin/babel src/ --watch --out-dir build/",
@@ -23,8 +23,7 @@
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.22.0",
     "babel-preset-stage-2": "^6.22.0",
-    "electron": "^1.4.15",
-    "webpack": "^1.14.0"
+    "electron": "^1.4.15"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
