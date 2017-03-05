@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { clipboard, nativeImage } from 'electron';
+import { clipboard, nativeImage, shell } from 'electron';
 import pathlib from 'path';
 import Search from './Search';
 import TexturesGrid from './TexturesGrid';
@@ -41,9 +41,6 @@ export default class Container extends Component {
       fs.mkdirSync(TEXTURES_PATH);
     }
 
-    // Add watcher for textures folder
-    this.addWatcher(TEXTURES_PATH);
-
     // Drag & Drop
     document.ondragover = (e) => {
       e.preventDefault()
@@ -51,27 +48,44 @@ export default class Container extends Component {
 
     document.ondrop = (e) => {
       e.preventDefault();
-      let path = e.dataTransfer.files[0].path.replace(/\\/g, '/');
+      let path = e.dataTransfer.files[0].path.replace(/\\/g, pathlib.sep);
 
       // Get tag (textures folder)
-      let tag = pathlib.parse(path).name;
+      let tag = path.split(pathlib.sep).pop();
 
-      // Do not add if tag already exists
-      if (this.state.tags[tag]) {
-        return;
+      // If it is a folder..
+      if (fs.lstatSync(path).isDirectory()) {
+
+        // Ignore already existing tags
+        if (this.state.tags[tag]) {
+          return;
+        }
+
+        // Clone directory
+        ncp(path, pathlib.join(TEXTURES_PATH, tag), (err) => {
+          if (err) {
+            return console.error(err);
+          }
+          else {
+
+            // Add watcher to folder
+            this.addWatcher(pathlib.join(TEXTURES_PATH, tag));
+          }
+        })
       }
+      // If it is a single file..
+      else {
 
-      // Clone directory
-      ncp(path, pathlib.join(TEXTURES_PATH, tag), (err) => {
-        if (err) {
-          return console.error(err);
-        }
-        else {
+        // Put in untagged tag
+        if (!fs.existsSync(pathlib.join(TEXTURES_PATH, 'untagged'))) {
+          fs.mkdirSync(pathlib.join(TEXTURES_PATH, 'untagged'));
 
-          // Add watcher
-          this.addWatcher(pathlib.join(TEXTURES_PATH, tag));
+          // Add watcher to folder
+          this.addWatcher(pathlib.join(TEXTURES_PATH, 'untagged'));
         }
-      })
+
+        fs.createReadStream(path).pipe(fs.createWriteStream(pathlib.join(TEXTURES_PATH, 'untagged', pathlib.basename(path))));
+      }
     }
 
     // Load all textures in fs
@@ -83,20 +97,37 @@ export default class Container extends Component {
     getDirectories(TEXTURES_PATH).forEach((path) => {
       this.addWatcher(pathlib.join(TEXTURES_PATH,path));
     });
+
+    // Press Enter to rename texture (Rename mode only)
+    document.addEventListener('keyup', this.onKeyUp, false);
+  }
+
+  onKeyUp = (e) => {
+
+    // ENTER to Rename
+    if (this.state.renameSelectedTexture && e.key === 'Enter' && this.state.filterText.length > 0) {
+      const selectedTexture = this.state.selectedTextures[Object.keys(this.state.selectedTextures)[0]];
+      fs.renameSync(selectedTexture.path, pathlib.join(TEXTURES_PATH, selectedTexture.tag, this.state.filterText + '.' + selectedTexture.ext));
+      this.setState({ renameSelectedTexture: false });
+    }
   }
 
   addWatcher = (path) => {
     let watcher = chokidar.watch(path, {ignored: /(^|[\/\\])\../});
 
     // Get tag (textures folder)
-    let tag = pathlib.parse(path).name;
+    let tag = pathlib.basename(path);
 
     watcher.on('all', (event, path) => console.log(event, path));
     watcher.on('add', path => {
 
-      // Exclude non-images
-      if (path.match(/\.(jpeg|jpg|gif|png)$/i) === null)
+      let parentFolder = pathlib.dirname(path).split(pathlib.sep).pop();
+
+      // Exclude subfolder files && non-images
+      if (parentFolder !== tag || path.match(/\.(jpeg|jpg|gif|png)$/i) === null) {
+        fs.unlinkSync(path);
         return;
+      }
 
       // Skip if already existing
       if (this.state.textures[path] != undefined) {
@@ -118,18 +149,30 @@ export default class Container extends Component {
       this.setState({ tags: tags, textures: textures });
     });
 
+    watcher.on('addDir', path => {
+
+      // Delete subfolders
+      let subfolder = pathlib.basename(path);
+      if (subfolder !== tag) {
+        rimraf(path, (err) => console.log(err));
+      }
+    });
+
     watcher.on('unlink', path => {
       let textures = this.state.textures;
 
       // Remove from tags
       let tags = this.state.tags;
       const texture = textures[path];
-      tags[texture.tag].splice(tags[texture.tag].indexOf(texture), 1);
 
-      // Remove from textures
-      delete textures[path];
+      if (texture !== undefined) {
+        tags[texture.tag].splice(tags[texture.tag].indexOf(texture), 1);
 
-      this.setState({ tags: tags, textures: textures });
+        // Remove from textures
+        delete textures[path];
+
+        this.setState({ tags: tags, textures: textures });
+      }
     });
 
     // Add watcher
@@ -149,65 +192,20 @@ export default class Container extends Component {
     this.setState({ footerText: text });
   }
 
-  onTexturePreview = (texturePath) => {
-    this.setState({ viewMode: 'preview', texturePreview: texturePath });
+  //----------------------------------ACTIONS----------------------------------\\
+  onTexturePreview = (texture) => {
+    this.setState({ viewMode: 'preview', texturePreview: texture });
   }
 
-  copyToClipboard = (texturePath) => {
+  copyToClipboard = (texture) => {
     //clipboard.writeText(texturePath);
-    let img = nativeImage.createFromPath(texturePath);
+    let img = nativeImage.createFromPath(texture.path);
     clipboard.writeImage(img);
     this.setState({ footerText: 'Copied to clipboard!' });
   }
 
   goToTag = (tag) => {
     this.setState({ filterText: tag, viewMode: 'textures' });
-  }
-
-  addTag = (tag) => {
-
-    if (this.state.tags[tag] === undefined) {
-
-      // Create Folder
-      const path = pathlib.join(TEXTURES_PATH, tag);
-      if (!fs.existsSync(path)) {
-        fs.mkdirSync(path);
-      }
-
-      // Store new tag
-      let temp = this.state.tags;
-      temp[tag] = [];
-
-      this.setState({ tags: temp });
-
-      // Add watcher
-      this.addWatcher(path);
-    }
-  }
-
-  deleteTag = (tag) => {
-
-    // Close and delete watcher
-    watchers[tag].close();
-    delete watchers[tag];
-
-    // Delete tag
-    let temp = this.state.tags;
-    delete temp[tag];
-    this.setState({ tags: temp });
-
-    // Delete textures associated to tag
-    let textures = this.state.textures;
-    Object.keys(textures).forEach((texture) => {
-      if (texture.tag === tag) {
-        delete textures[texture];
-      }
-    });
-
-    this.setState({ textures: textures });
-
-    // Remove directory
-    rimraf(pathlib.join(TEXTURES_PATH, tag), (err) => console.log(err));
   }
 
   // Select Texture
@@ -264,13 +262,65 @@ export default class Container extends Component {
       // Move selected texture to new path
       const selectedTexture = this.state.selectedTextures[key];
       fs.renameSync(selectedTexture.path, pathlib.join(TEXTURES_PATH, tag, selectedTexture.name + '.' + selectedTexture.ext));
-      console.log(this.state.selectedTextures);
     });
 
     this.deselectAllTextures();
     this.setState({ viewMode: 'textures' });
   }
 
+  // Open image viewer
+  openDesktopViewer = () => {
+    shell.openItem(pathlib.join(__dirname, '..', '..', this.state.texturePreview.path));
+  }
+
+  //------------------------------TAGS MANAGEMENT------------------------------\\
+  addTag = (tag) => {
+
+    if (this.state.tags[tag] === undefined) {
+
+      // Create Folder
+      const path = pathlib.join(TEXTURES_PATH, tag);
+      if (!fs.existsSync(path)) {
+        fs.mkdirSync(path);
+      }
+
+      // Store new tag
+      let temp = this.state.tags;
+      temp[tag] = [];
+
+      this.setState({ tags: temp });
+
+      // Add watcher
+      this.addWatcher(path);
+    }
+  }
+
+  deleteTag = (tag) => {
+
+    // Close and delete watcher
+    watchers[tag].close();
+    delete watchers[tag];
+
+    // Delete tag
+    let temp = this.state.tags;
+    delete temp[tag];
+    this.setState({ tags: temp });
+
+    // Delete textures associated to tag
+    let textures = this.state.textures;
+    Object.keys(textures).forEach((texture) => {
+      if (textures[texture].tag === tag) {
+        delete textures[texture];
+      }
+    });
+
+    this.setState({ textures: textures });
+
+    // Remove directory
+    rimraf(pathlib.join(TEXTURES_PATH, tag), (err) => console.log(err));
+  }
+
+  //---------------------------------VIEW MODE---------------------------------\\
   toggleViewMode = () => {
 
     let nextViewMode;
@@ -294,7 +344,7 @@ export default class Container extends Component {
     // Drag & Drop UI
     let dragDrop =
     <div style={dragDropStyle}>
-      <div>Drag your folders here!</div>
+      <div>Drag your textures here!</div>
       <div className="fa fa-chevron-down fontbulger"/>
     </div>
 
@@ -303,6 +353,7 @@ export default class Container extends Component {
     Object.keys(this.state.tags).sort().forEach((tag) => {
 
       const textures = this.state.tags[tag];
+      textures.sort((a, b) => { return a.name > b.name; });
 
       texturesGrids.push(
         <TexturesGrid
@@ -358,7 +409,7 @@ export default class Container extends Component {
       placeholder = 'Type to filter';
     }
     else if (this.state.viewMode === 'tags') {
-      placeholder = 'Enter to add';
+      placeholder = 'Press Enter to add';
     }
 
     // Search bar
@@ -367,6 +418,15 @@ export default class Container extends Component {
         placeholder={placeholder}
         filterText={this.state.filterText}
         setFilterText={this.setFilterText}/>
+
+    // Footer Cancel Action
+    let footerCancelAction;
+    if (this.state.renameSelectedTexture) {
+      footerCancelAction = this.toggleRename;
+    }
+    else if (Object.keys(this.state.selectedTextures).length > 0) {
+      footerCancelAction = this.deselectAllTextures;
+    }
 
     return(
       <div>
@@ -380,10 +440,12 @@ export default class Container extends Component {
           toggleViewMode={this.toggleViewMode}
           viewMode={this.state.viewMode}
           showTextureOptions={Object.keys(this.state.selectedTextures).length > 0}
-          deselectAllTextures={this.deselectAllTextures}
+          cancelAction={footerCancelAction}
           deleteSelectedTags={this.deleteSelectedTags}
           toggleRename={this.toggleRename}
-          renameSelectedTexture={this.state.renameSelectedTexture}/>
+          openDesktopViewer={this.openDesktopViewer}
+          showRenameButton={!this.state.renameSelectedTexture && Object.keys(this.state.selectedTextures).length === 1}
+          showDeleteButton={!this.state.renameSelectedTexture}/>
       </div>
     );
   }

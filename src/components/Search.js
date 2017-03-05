@@ -16,8 +16,7 @@ export default class Search extends Component {
 
     // Match Backspace
     if (e.key === 'Backspace') {
-      temp = temp.slice(0, -1);
-      this.props.setFilterText(temp);
+      this.clearText();
     }
 
     // Match Esc
@@ -27,10 +26,14 @@ export default class Search extends Component {
     }
 
     // Match exactly one alphanumeric char
-    else if (/^[a-z0-9]$/i.test(e.key) && temp.length < 10) {
+    else if (/^[a-z0-9-_]$/i.test(e.key) && temp.length < 10) {
       temp += e.key;
       this.props.setFilterText(temp);
     }
+  }
+
+  clearText = () => {
+    this.props.setFilterText('');
   }
 
   render() {
@@ -38,9 +41,16 @@ export default class Search extends Component {
     let text = this.props.filterText.length > 0 ? this.props.filterText : this.props.placeholder;
     let textStyle = this.props.filterText.length > 0 ? filterStyle : placeholderStyle;
 
+    // Clear button
+    let clearButton;
+    if (this.props.filterText.length > 0) {
+      clearButton = <div className="fa fa-times" style={clearButtonStyle} onClick={this.clearText}/>
+    }
+
     return(
       <div style={searchStyle}>
         <div style={textStyle}>{text}</div>
+        {clearButton}
         <hr style={dividerStyle}/>
       </div>
     );
@@ -53,6 +63,9 @@ const searchStyle = {
   width: '100%',
   backgroundColor: '#fff',
   zIndex: '1',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   WebkitAppRegion: 'drag'
 }
 
@@ -63,7 +76,7 @@ const filterStyle = {
   height: '64px',
   fontSize: '20px',
   paddingTop: '20px',
-  color: '#636262',
+  color: '#666666',
   cursor: 'default'
 }
 
@@ -82,4 +95,11 @@ const placeholderStyle = {
 const dividerStyle = {
   margin: '0',
   padding: '0'
+}
+
+const clearButtonStyle = {
+  position: 'absolute',
+  right: '32px',
+  cursor: 'pointer',
+  color: '#666666'
 }

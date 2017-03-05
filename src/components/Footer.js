@@ -16,7 +16,7 @@ export default class Footer extends Component {
         break;
 
       case 'preview':
-        viewModeButtonClass = 'fa fa-times';
+        viewModeButtonClass = 'fa fa-eye';
         break;
 
       default:
@@ -32,17 +32,23 @@ export default class Footer extends Component {
 
     // Option Buttons (right)
     let optionButtons = <div style={optionsStyle}/>;
-    if (this.props.showTextureOptions) {
+    if (this.props.viewMode === 'preview') {
+     optionButtons =
+       <div style={optionsStyle}>
+         <div className='fa fa-camera-retro' style={optionIconStyle} onClick={this.props.openDesktopViewer}/>
+       </div>
+    }
+    else if (this.props.showTextureOptions) {
       optionButtons =
         <div style={optionsStyle}>
-          <div style={{ display: this.props.renameSelectedTexture ? 'none' : '' }}>
+          <div style={{ display: this.props.showRenameButton ? '' : 'none' }}>
             <div className='fa fa-pencil' style={optionIconStyle} onClick={this.props.toggleRename}/>
           </div>
-          <div style={{ display: this.props.renameSelectedTexture ? 'none' : '' }}>
+          <div style={{ display: this.props.showDeleteButton ? '' : 'none' }}>
             <div className='fa fa-trash-o' style={optionIconStyle} onClick={this.props.deleteSelectedTags}/>
           </div>
           <div>
-            <div className='fa fa-times' style={optionIconStyle} onClick={this.props.deselectAllTextures}/>
+            <div className='fa fa-times' style={optionIconStyle} onClick={this.props.cancelAction}/>
           </div>
         </div>
     }

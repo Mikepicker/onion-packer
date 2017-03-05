@@ -31,12 +31,12 @@ export default class Item extends Component {
 
   onClickPreview = (e) => {
     e.preventDefault();
-    this.props.onTexturePreview(this.props.path);
+    this.props.onTexturePreview(this.props.texture);
   }
 
   onClickClipboard = (e) => {
     e.preventDefault();
-    this.props.copyToClipboard(this.props.path);
+    this.props.copyToClipboard(this.props.texture);
   }
 
   render() {

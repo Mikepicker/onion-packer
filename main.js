@@ -12,7 +12,7 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: true, maximizable: false });
+  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: true, maximizable: false, resizable: false });
 
   // Hide Menu
   //mainWindow.setMenu(null);
@@ -24,7 +24,7 @@ function createWindow () {
     slashes: true
   }))
 
-  mainWindow.setResizable(false);
+  //mainWindow.setResizable(false);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

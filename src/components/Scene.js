@@ -54,10 +54,11 @@ export default class Scene extends React.Component {
         <resources>
           <texture
             resourceId="texture"
-            url={this.props.texture}
+            url={this.props.texture.path}
             wrapS={THREE.RepeatWrapping}
             wrapT={THREE.RepeatWrapping}
             anisotropy={16}
+            repeat={new THREE.Vector2(4, 4)}
           />
           <meshLambertMaterial
             resourceId="material"
