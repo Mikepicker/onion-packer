@@ -1,4 +1,6 @@
 const electron = require('electron')
+const { ipcMain } = require('electron')
+
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
@@ -29,6 +31,13 @@ function createWindow () {
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     mainWindow = null
+  })
+
+  ipcMain.on('ondragstart', (event, filePath) => {
+    event.sender.startDrag({
+      file: filePath,
+      icon: './logo.png'
+    })
   })
 }
 

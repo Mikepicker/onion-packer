@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import pathlib from 'path';
 
 export default class Item extends Component {
   constructor(props) {
@@ -39,6 +40,12 @@ export default class Item extends Component {
     this.props.copyToClipboard(this.props.texture);
   }
 
+  dragStart = (e) => {
+    e.preventDefault();
+    let absPath = pathlib.join(__dirname, '..', '..', this.props.path)
+    require('electron').ipcRenderer.send('ondragstart', absPath);
+  }
+
   render() {
 
     let hoverMenu = null;
@@ -61,9 +68,11 @@ export default class Item extends Component {
 
     return(
       <div
+        draggable="true"
         className="col-xs-3 col-sm-3 col-md-3 col-lg-3"
         onMouseEnter={this.onHover}
-        onMouseLeave={this.onOut}>
+        onMouseLeave={this.onOut}
+        onDragStart={this.dragStart}>
         <img
           className="img-responsive img-rounded"
           src={this.props.path}
