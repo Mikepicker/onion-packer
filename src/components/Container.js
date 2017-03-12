@@ -13,6 +13,7 @@ import ncp from 'ncp';
 import rimraf from 'rimraf';
 
 const TEXTURES_PATH = './textures';
+const APP_PATH = electron.remote.app.getAppPath();//pathlib.join(electron.remote.app.getAppPath(), '..', '..');
 
 // Chokidar file watchers (tag -> watcher)
 let watchers = {};
@@ -141,7 +142,7 @@ export default class Container extends Component {
 
       // Push texture
       let textures = this.state.textures;
-      textures[path] = { id: Object.keys(this.state.textures).length, basepath: pathlib.join(electron.remote.app.getAppPath(), '..', '..'), path: path, tag: tag, name: pathlib.parse(path).name, ext: path.split('.').pop() };
+      textures[path] = { id: Object.keys(this.state.textures).length, basepath: APP_PATH, path: path, tag: tag, name: pathlib.parse(path).name, ext: path.split('.').pop() };
 
       // Push tag
       let tags = this.state.tags;
@@ -363,7 +364,7 @@ export default class Container extends Component {
     Object.keys(this.state.tags).sort().forEach((tag) => {
 
       const textures = this.state.tags[tag];
-      textures.sort((a, b) => { return a.name > b.name; });
+      textures.slice().sort((a, b) => { return a.name > b.name; });
       //console.log(textures);
       texturesGrids.push(
         <TexturesGrid

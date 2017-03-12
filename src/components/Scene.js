@@ -33,6 +33,7 @@ export default class Scene extends React.Component {
   }
 
   componentDidMount = () => {
+    window.scroll(0, 0);
     window.onwheel = this.scrollHandler;
   }
 

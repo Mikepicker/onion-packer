@@ -53,11 +53,17 @@ export default class Footer extends Component {
         </div>
     }
 
+    // Footer text
+    let footerText = this.props.footerText.substring(0, 30);
+    if (this.props.footerText.length > 30) {
+      footerText += '...';
+    }
+
     return(
       <div>
         <div style={footerStyle}>
           {viewModeButton}
-          <div style={descrStyle}>{this.props.footerText}</div>
+          <div style={descrStyle}>{footerText}</div>
           {optionButtons}
         </div>
         <div style={creditsStyle}>Made with <div className='fa fa-heart' style={{ color: '#ff6f6f'}}/> by Michele Rullo & Andrea Cipollone</div>
