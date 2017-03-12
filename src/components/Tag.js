@@ -39,7 +39,7 @@ const tagDeleteStyle = {
 const tagStyle = {
   flex: '1',
   height: '20px',
-  minWidth: '100px',
+  minWidth: '120px',
   borderStyle: 'solid',
   borderWidth: '1px',
   borderRadius: '5px',

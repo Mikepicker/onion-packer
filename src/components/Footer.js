@@ -53,11 +53,17 @@ export default class Footer extends Component {
         </div>
     }
 
+    // Footer text
+    let footerText = this.props.footerText.substring(0, 30);
+    if (this.props.footerText.length > 30) {
+      footerText += '...';
+    }
+
     return(
       <div>
         <div style={footerStyle}>
           {viewModeButton}
-          <div style={descrStyle}>{this.props.footerText}</div>
+          <div style={descrStyle}>{footerText}</div>
           {optionButtons}
         </div>
         <div style={creditsStyle}>Made with <div className='fa fa-heart' style={{ color: '#ff6f6f'}}/> by Michele Rullo & Andrea Cipollone</div>
@@ -72,7 +78,7 @@ const footerStyle = {
   bottom: '20px',
   width: '100%',
   height: '40px',
-  backgroundColor: '#303030',
+  backgroundColor: '#333333',
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -93,7 +99,7 @@ const creditsStyle = {
   bottom: '0',
   width: '100%',
   height: '20px',
-  backgroundColor: '#202020',
+  backgroundColor: '#222222',
   color: '#7e7e7e',
   fontSize: '10px',
   fontWeight: 'bold',

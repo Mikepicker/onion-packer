@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { clipboard, nativeImage, shell } from 'electron';
+import electron from 'electron';
 import pathlib from 'path';
 import Search from './Search';
 import TexturesGrid from './TexturesGrid';
@@ -12,6 +13,7 @@ import ncp from 'ncp';
 import rimraf from 'rimraf';
 
 const TEXTURES_PATH = './textures';
+const APP_PATH = electron.remote.app.getAppPath();//pathlib.join(electron.remote.app.getAppPath(), '..', '..');
 
 // Chokidar file watchers (tag -> watcher)
 let watchers = {};
@@ -36,6 +38,8 @@ export default class Container extends Component {
   // Start file watcher
   componentDidMount = () => {
 
+    const basepath = electron.remote.app.getAppPath();
+
     // Create local textures directory if not exists
     if (!fs.existsSync(TEXTURES_PATH)) {
       fs.mkdirSync(TEXTURES_PATH);
@@ -46,15 +50,16 @@ export default class Container extends Component {
       e.preventDefault()
     }
 
+    // On drop textures
     document.ondrop = (e) => {
       e.preventDefault();
-      let path = e.dataTransfer.files[0].path.replace(/\\/g, pathlib.sep);
+      let sourcePath = e.dataTransfer.files[0].path.replace(/\\/g, pathlib.sep);
 
       // Get tag (textures folder)
-      let tag = path.split(pathlib.sep).pop();
+      let tag = sourcePath.split(pathlib.sep).pop();
 
       // If it is a folder..
-      if (fs.lstatSync(path).isDirectory()) {
+      if (fs.lstatSync(sourcePath).isDirectory()) {
 
         // Ignore already existing tags
         if (this.state.tags[tag]) {
@@ -62,7 +67,7 @@ export default class Container extends Component {
         }
 
         // Clone directory
-        ncp(path, pathlib.join(TEXTURES_PATH, tag), (err) => {
+        ncp(sourcePath, pathlib.join(TEXTURES_PATH, tag), (err) => {
           if (err) {
             return console.error(err);
           }
@@ -84,7 +89,8 @@ export default class Container extends Component {
           this.addWatcher(pathlib.join(TEXTURES_PATH, 'untagged'));
         }
 
-        fs.createReadStream(path).pipe(fs.createWriteStream(pathlib.join(TEXTURES_PATH, 'untagged', pathlib.basename(path))));
+        fs.createReadStream(sourcePath).pipe(fs.createWriteStream(pathlib.join(TEXTURES_PATH, 'untagged', pathlib.basename(sourcePath))));
+
       }
     }
 
@@ -95,7 +101,7 @@ export default class Container extends Component {
     }
 
     getDirectories(TEXTURES_PATH).forEach((path) => {
-      this.addWatcher(pathlib.join(TEXTURES_PATH,path));
+      this.addWatcher(pathlib.join(TEXTURES_PATH, path));
     });
 
     // Press Enter to rename texture (Rename mode only)
@@ -118,7 +124,7 @@ export default class Container extends Component {
     // Get tag (textures folder)
     let tag = pathlib.basename(path);
 
-    watcher.on('all', (event, path) => console.log(event, path));
+    //watcher.on('all', (event, path) => console.log(event, path));
     watcher.on('add', path => {
 
       let parentFolder = pathlib.dirname(path).split(pathlib.sep).pop();
@@ -136,7 +142,7 @@ export default class Container extends Component {
 
       // Push texture
       let textures = this.state.textures;
-      textures[path] = { id: Object.keys(this.state.textures).length, path: path, tag: tag, name: pathlib.parse(path).name, ext: path.split('.').pop() };
+      textures[path] = { id: Object.keys(this.state.textures).length, basepath: APP_PATH, path: path, tag: tag, name: pathlib.parse(path).name, ext: path.split('.').pop() };
 
       // Push tag
       let tags = this.state.tags;
@@ -273,6 +279,11 @@ export default class Container extends Component {
     shell.openItem(pathlib.join(__dirname, '..', '..', this.state.texturePreview.path));
   }
 
+  // Close onion packer
+  powerOff = () => {
+    window.close();
+  }
+
   //------------------------------TAGS MANAGEMENT------------------------------\\
   addTag = (tag) => {
 
@@ -353,8 +364,8 @@ export default class Container extends Component {
     Object.keys(this.state.tags).sort().forEach((tag) => {
 
       const textures = this.state.tags[tag];
-      textures.sort((a, b) => { return a.name > b.name; });
-
+      textures.slice().sort((a, b) => { return a.name > b.name; });
+      //console.log(textures);
       texturesGrids.push(
         <TexturesGrid
           key={tag}
@@ -417,7 +428,8 @@ export default class Container extends Component {
       <Search
         placeholder={placeholder}
         filterText={this.state.filterText}
-        setFilterText={this.setFilterText}/>
+        setFilterText={this.setFilterText}
+        powerOff={this.powerOff}/>
 
     // Footer Cancel Action
     let footerCancelAction;

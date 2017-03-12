@@ -1,4 +1,6 @@
 const electron = require('electron')
+const { ipcMain } = require('electron')
+
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
@@ -12,7 +14,7 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: true, maximizable: false, resizable: false });
+  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: false, maximizable: false, resizable: false });
 
   // Hide Menu
   //mainWindow.setMenu(null);
@@ -25,10 +27,18 @@ function createWindow () {
   }))
 
   //mainWindow.setResizable(false);
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     mainWindow = null
+  })
+
+  ipcMain.on('ondragstart', (event, filePath) => {
+    event.sender.startDrag({
+      file: filePath,
+      icon: './logo.png'
+    })
   })
 }
 

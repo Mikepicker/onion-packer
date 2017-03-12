@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import pathlib from 'path';
 
 export default class Item extends Component {
   constructor(props) {
@@ -7,6 +8,7 @@ export default class Item extends Component {
       this.state = {
         'hover': false
       }
+
   }
 
   onHover = () => {
@@ -39,6 +41,12 @@ export default class Item extends Component {
     this.props.copyToClipboard(this.props.texture);
   }
 
+  dragStart = (e) => {
+    e.preventDefault();
+    let absPath = pathlib.join(this.props.texture.basepath, this.props.path);
+    require('electron').ipcRenderer.send('ondragstart', absPath);
+  }
+
   render() {
 
     let hoverMenu = null;
@@ -58,15 +66,16 @@ export default class Item extends Component {
       imgStyle = hoverStyle;
     }
 
-
     return(
       <div
+        draggable="true"
         className="col-xs-3 col-sm-3 col-md-3 col-lg-3"
         onMouseEnter={this.onHover}
-        onMouseLeave={this.onOut}>
+        onMouseLeave={this.onOut}
+        onDragStart={this.dragStart}>
         <img
           className="img-responsive img-rounded"
-          src={this.props.path}
+          src={pathlib.join(this.props.texture.basepath, this.props.path)}
           alt=""
           style={imgStyle}
           onClick={this.toggleSelected}/>

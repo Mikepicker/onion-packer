@@ -50,6 +50,7 @@ export default class Search extends Component {
     return(
       <div style={searchStyle}>
         <div style={textStyle}>{text}</div>
+        <div className="fa fa-power-off" style={powerButtonStyle} onClick={this.props.powerOff}/>
         {clearButton}
         <hr style={dividerStyle}/>
       </div>
@@ -66,7 +67,7 @@ const searchStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  WebkitAppRegion: 'drag'
+  webkitAppRegion: 'drag'
 }
 
 const filterStyle = {
@@ -93,6 +94,9 @@ const placeholderStyle = {
 }
 
 const dividerStyle = {
+  position: 'absolute',
+  width: '100%',
+  top: '100%',
   margin: '0',
   padding: '0'
 }
@@ -101,5 +105,14 @@ const clearButtonStyle = {
   position: 'absolute',
   right: '32px',
   cursor: 'pointer',
-  color: '#666666'
+  color: '#666666',
+  webkitAppRegion: 'no-drag'
+}
+
+const powerButtonStyle = {
+  position: 'absolute',
+  left: '32px',
+  cursor: 'pointer',
+  color: '#666666',
+  webkitAppRegion: 'no-drag'
 }
