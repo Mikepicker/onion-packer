@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import React3 from 'react-three-renderer';
 import * as THREE from 'three';
+import pathlib from 'path';
 
 export default class Scene extends React.Component {
   constructor(props, context) {
@@ -54,7 +55,7 @@ export default class Scene extends React.Component {
         <resources>
           <texture
             resourceId="texture"
-            url={this.props.texture.path}
+            url={pathlib.join(this.props.texture.basepath, this.props.texture.path)}
             wrapS={THREE.RepeatWrapping}
             wrapT={THREE.RepeatWrapping}
             anisotropy={16}

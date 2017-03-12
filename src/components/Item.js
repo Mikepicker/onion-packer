@@ -8,6 +8,7 @@ export default class Item extends Component {
       this.state = {
         'hover': false
       }
+
   }
 
   onHover = () => {
@@ -42,7 +43,7 @@ export default class Item extends Component {
 
   dragStart = (e) => {
     e.preventDefault();
-    let absPath = pathlib.join(__dirname, '..', '..', this.props.path)
+    let absPath = pathlib.join(this.props.texture.basepath, this.props.path);
     require('electron').ipcRenderer.send('ondragstart', absPath);
   }
 
@@ -65,7 +66,6 @@ export default class Item extends Component {
       imgStyle = hoverStyle;
     }
 
-
     return(
       <div
         draggable="true"
@@ -75,7 +75,7 @@ export default class Item extends Component {
         onDragStart={this.dragStart}>
         <img
           className="img-responsive img-rounded"
-          src={this.props.path}
+          src={pathlib.join(this.props.texture.basepath, this.props.path)}
           alt=""
           style={imgStyle}
           onClick={this.toggleSelected}/>
