@@ -13,7 +13,7 @@ import ncp from 'ncp';
 import rimraf from 'rimraf';
 
 const TEXTURES_PATH = './textures';
-const APP_PATH = electron.remote.app.getAppPath();//pathlib.join(electron.remote.app.getAppPath(), '..', '..');
+const APP_PATH = pathlib.join(electron.remote.app.getAppPath(), '..', '..');
 
 // Chokidar file watchers (tag -> watcher)
 let watchers = {};
