@@ -30,6 +30,7 @@
     "chokidar": "^1.6.1",
     "electron": "^1.6.2",
     "fs": "0.0.1-security",
+    "fs-extra": "^2.0.0",
     "lodash": "^4.17.4",
     "ncp": "^2.0.0",
     "react": "^15.4.2",

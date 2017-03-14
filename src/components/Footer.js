@@ -32,13 +32,7 @@ export default class Footer extends Component {
 
     // Option Buttons (right)
     let optionButtons = <div style={optionsStyle}/>;
-    if (this.props.viewMode === 'preview') {
-     optionButtons =
-       <div style={optionsStyle}>
-         <div className='fa fa-camera-retro' style={optionIconStyle} onClick={this.props.openDesktopViewer}/>
-       </div>
-    }
-    else if (this.props.showTextureOptions) {
+    if (this.props.showTextureOptions) {
       optionButtons =
         <div style={optionsStyle}>
           <div style={{ display: this.props.showRenameButton ? '' : 'none' }}>
@@ -82,7 +76,8 @@ const footerStyle = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  WebkitAppRegion: 'drag'
 }
 
 const descrStyle = {
@@ -103,7 +98,8 @@ const creditsStyle = {
   color: '#7e7e7e',
   fontSize: '10px',
   fontWeight: 'bold',
-  textAlign: 'center'
+  textAlign: 'center',
+  cursor: 'default'
 }
 
 const viewModeButtonContainer = {

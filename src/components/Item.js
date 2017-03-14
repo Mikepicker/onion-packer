@@ -52,9 +52,9 @@ export default class Item extends Component {
     let hoverMenu = null;
     if (this.state.hover) {
       hoverMenu =
-        <div style={hoverMenuStyle}>
+        <div className="center-block" style={hoverMenuStyle}>
           <div className="fa fa-eye" style={hoverItemStyle} onClick={this.onClickPreview}/>
-          <div className="fa fa-clipboard" style={hoverItemStyle} onClick={this.onClickClipboard}/>
+          <div className="fa fa-camera-retro" style={hoverItemStyle} onClick={() => this.props.openDesktopViewer(this.props.texture)}/>
         </div>
     }
 
@@ -69,7 +69,7 @@ export default class Item extends Component {
     return(
       <div
         draggable="true"
-        className="col-xs-3 col-sm-3 col-md-3 col-lg-3"
+        className="col-xs-3 col-sm-3 col-md-3 col-lg-3 center-block"
         onMouseEnter={this.onHover}
         onMouseLeave={this.onOut}
         onDragStart={this.dragStart}>

@@ -14,7 +14,7 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: false, maximizable: false, resizable: false });
+  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: false, maximizable: false, resizable: true });
 
   // Hide Menu
   //mainWindow.setMenu(null);
@@ -27,7 +27,7 @@ function createWindow () {
   }))
 
   //mainWindow.setResizable(false);
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -37,7 +37,7 @@ function createWindow () {
   ipcMain.on('ondragstart', (event, filePath) => {
     event.sender.startDrag({
       file: filePath,
-      icon: './logo.png'
+      icon: filePath
     })
   })
 }

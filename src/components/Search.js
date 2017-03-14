@@ -16,7 +16,7 @@ export default class Search extends Component {
 
     // Match Backspace
     if (e.key === 'Backspace') {
-      this.clearText();
+      this.props.setFilterText(temp.slice(0, -1));
     }
 
     // Match Esc
@@ -48,11 +48,14 @@ export default class Search extends Component {
     }
 
     return(
-      <div style={searchStyle}>
-        <div style={textStyle}>{text}</div>
-        <div className="fa fa-power-off" style={powerButtonStyle} onClick={this.props.powerOff}/>
-        {clearButton}
-        <hr style={dividerStyle}/>
+      <div>
+        <div style={dragBarStyle}/>
+        <div style={searchStyle}>
+          <div style={textStyle}>{text}</div>
+          <div className="fa fa-power-off" style={powerButtonStyle} onClick={this.props.powerOff}/>
+          {clearButton}
+          <hr style={dividerStyle}/>
+        </div>
       </div>
     );
   }
@@ -66,8 +69,15 @@ const searchStyle = {
   zIndex: '1',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  webkitAppRegion: 'drag'
+  justifyContent: 'center'
+}
+
+const dragBarStyle = {
+  position: 'absolute',
+  top: 0,
+  width: '100%',
+  height: '64px',
+  WebkitAppRegion: 'drag'
 }
 
 const filterStyle = {
@@ -106,7 +116,7 @@ const clearButtonStyle = {
   right: '32px',
   cursor: 'pointer',
   color: '#666666',
-  webkitAppRegion: 'no-drag'
+  WebkitAppRegion: 'no-drag'
 }
 
 const powerButtonStyle = {
@@ -114,5 +124,5 @@ const powerButtonStyle = {
   left: '32px',
   cursor: 'pointer',
   color: '#666666',
-  webkitAppRegion: 'no-drag'
+  WebkitAppRegion: 'no-drag'
 }
