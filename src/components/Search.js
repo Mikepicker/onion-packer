@@ -49,7 +49,11 @@ export default class Search extends Component {
 
     return(
       <div>
-        <div style={dragBarStyle}/>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div style={powerButtonDragStyle}/>
+          <div style={dragBarStyle}/>
+          <div style={clearButtonDragStyle}/>
+        </div>
         <div style={searchStyle}>
           <div style={textStyle}>{text}</div>
           <div className="fa fa-power-off" style={powerButtonStyle} onClick={this.props.powerOff}/>
@@ -70,14 +74,6 @@ const searchStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center'
-}
-
-const dragBarStyle = {
-  position: 'absolute',
-  top: 0,
-  width: '100%',
-  height: '64px',
-  WebkitAppRegion: 'drag'
 }
 
 const filterStyle = {
@@ -111,6 +107,14 @@ const dividerStyle = {
   padding: '0'
 }
 
+const powerButtonStyle = {
+  position: 'absolute',
+  left: '32px',
+  cursor: 'pointer',
+  color: '#666666',
+  WebkitAppRegion: 'no-drag'
+}
+
 const clearButtonStyle = {
   position: 'absolute',
   right: '32px',
@@ -119,10 +123,19 @@ const clearButtonStyle = {
   WebkitAppRegion: 'no-drag'
 }
 
-const powerButtonStyle = {
-  position: 'absolute',
-  left: '32px',
-  cursor: 'pointer',
-  color: '#666666',
-  WebkitAppRegion: 'no-drag'
+const dragBarStyle = {
+  flex: 1,
+  width: '100%',
+  height: '64px',
+  WebkitAppRegion: 'drag'
+}
+
+const powerButtonDragStyle = {
+  flex: '0 0 48px',
+  height: '64px'
+}
+
+const clearButtonDragStyle = {
+  flex: '0 0 48px',
+  height: '64px'
 }

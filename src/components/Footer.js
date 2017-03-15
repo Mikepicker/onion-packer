@@ -76,8 +76,7 @@ const footerStyle = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: 'center',
-  WebkitAppRegion: 'drag'
+  justifyContent: 'center'
 }
 
 const descrStyle = {
