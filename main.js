@@ -14,7 +14,7 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: false, maximizable: false, resizable: true });
+  mainWindow = new BrowserWindow({ width: 400, height: 600, icon: './icon.png', frame: false, maximizable: false, resizable: false });
 
   // Hide Menu
   //mainWindow.setMenu(null);
@@ -27,7 +27,7 @@ function createWindow () {
   }))
 
   //mainWindow.setResizable(false);
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
