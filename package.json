@@ -6,7 +6,9 @@
   "scripts": {
     "babel": "./node_modules/.bin/babel src/ --watch --out-dir build/",
     "start": "electron .",
-    "dev": "npm run babel | npm start"
+    "dev": "npm run babel | npm start",
+    "bundle_win": "electron-packager . onion-packer --overwrite --icon=./icon.ico --platform=win32",
+    "bundle_osx": "electron-packager . onion-packer --overwrite --icon=./icon.icns --platform=darwin"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
