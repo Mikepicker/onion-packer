@@ -472,7 +472,6 @@ export default class Container extends Component {
 const containerStyle = {
   width: '100%',
   height: '100%',
-  paddingTop: '40px',
   paddingBottom: '50px'
 }
 
