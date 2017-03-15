@@ -10,7 +10,7 @@ export default class Scene extends React.Component {
     // construct the position vector here, because if we use 'new' within render,
     // React will think that things have changed when they have not.
     this.cameraPosition = new THREE.Vector3(0, 0, 2);
-    this.directionalLightPosition = new THREE.Vector3(0, 0, 1);
+    this.directionalLightPosition = new THREE.Vector3(0, 1, 1);
     this.scenePosition = new THREE.Vector3(0, 0, 0);
 
     this.state = {
@@ -60,7 +60,7 @@ export default class Scene extends React.Component {
             wrapS={THREE.RepeatWrapping}
             wrapT={THREE.RepeatWrapping}
             anisotropy={16}
-            repeat={new THREE.Vector2(4, 4)}
+            repeat={new THREE.Vector2(2, 2)}
           />
           <meshLambertMaterial
             resourceId="material"

@@ -41,7 +41,8 @@ export default class TexturesGrid extends Component {
             onTexturePreview={this.props.onTexturePreview}
             copyToClipboard={this.props.copyToClipboard}
             selectTexture={this.props.selectTexture}
-            deselectTexture={this.props.deselectTexture}/>
+            deselectTexture={this.props.deselectTexture}
+            openDesktopViewer={this.props.openDesktopViewer}/>
         );
       });
 

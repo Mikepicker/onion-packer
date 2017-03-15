@@ -7,7 +7,7 @@ import TexturesGrid from './TexturesGrid';
 import TagsGrid from './TagsGrid';
 import Footer from './Footer';
 import Scene from './Scene';
-import fs from 'fs';
+import fs from 'fs-extra';
 import chokidar from 'chokidar';
 import ncp from 'ncp';
 import rimraf from 'rimraf';
@@ -55,6 +55,11 @@ export default class Container extends Component {
       e.preventDefault();
       let sourcePath = e.dataTransfer.files[0].path.replace(/\\/g, pathlib.sep);
 
+      // Do nothing if coming from an internal folder
+      if (sourcePath.indexOf(basepath) !== -1) {
+        return;
+      }
+
       // Get tag (textures folder)
       let tag = sourcePath.split(pathlib.sep).pop();
 
@@ -89,8 +94,7 @@ export default class Container extends Component {
           this.addWatcher(pathlib.join(TEXTURES_PATH, 'untagged'));
         }
 
-        fs.createReadStream(sourcePath).pipe(fs.createWriteStream(pathlib.join(TEXTURES_PATH, 'untagged', pathlib.basename(sourcePath))));
-
+        fs.copySync(sourcePath, pathlib.join(TEXTURES_PATH, 'untagged', pathlib.basename(sourcePath)));
       }
     }
 
@@ -114,6 +118,7 @@ export default class Container extends Component {
     if (this.state.renameSelectedTexture && e.key === 'Enter' && this.state.filterText.length > 0) {
       const selectedTexture = this.state.selectedTextures[Object.keys(this.state.selectedTextures)[0]];
       fs.renameSync(selectedTexture.path, pathlib.join(TEXTURES_PATH, selectedTexture.tag, this.state.filterText + '.' + selectedTexture.ext));
+      this.deselectAllTextures();
       this.setState({ renameSelectedTexture: false });
     }
   }
@@ -275,8 +280,8 @@ export default class Container extends Component {
   }
 
   // Open image viewer
-  openDesktopViewer = () => {
-    shell.openItem(pathlib.join(__dirname, '..', '..', this.state.texturePreview.path));
+  openDesktopViewer = (texture) => {
+    shell.openItem(pathlib.join(texture.basepath, texture.path));
   }
 
   // Close onion packer
@@ -378,6 +383,7 @@ export default class Container extends Component {
           copyToClipboard={this.copyToClipboard}
           selectTexture={this.selectTexture}
           deselectTexture={this.deselectTexture}
+          openDesktopViewer={this.openDesktopViewer}
         />
       );
 
