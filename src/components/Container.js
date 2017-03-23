@@ -30,7 +30,8 @@ export default class Container extends Component {
       viewMode: 'textures', // textures, tags, preview
       texturePreview: null,
       selectedTextures: {},
-      renameSelectedTexture: false
+      renameSelectedTexture: false,
+      textureID: 0
     }
 
   }
@@ -123,6 +124,9 @@ export default class Container extends Component {
       const selectedTexture = this.state.selectedTextures[Object.keys(this.state.selectedTextures)[0]];
       let newPath = pathlib.join(TEXTURES_PATH, selectedTexture.tag, this.state.filterText + '.' + selectedTexture.ext);
 
+      // Remove selected texture
+      this.deleteTexture(selectedTexture.path);
+
       // Name already existing
       let count = 1;
       while (fs.existsSync(newPath)) {
@@ -161,7 +165,7 @@ export default class Container extends Component {
 
       // Push texture
       let textures = this.state.textures;
-      textures[path] = { id: Object.keys(this.state.textures).length, basepath: APP_PATH, path: path, tag: tag, name: pathlib.parse(path).name, ext: path.split('.').pop() };
+      textures[path] = { id: this.state.textureID, basepath: APP_PATH, path: path, tag: tag, name: pathlib.parse(path).name, ext: path.split('.').pop() };
 
       // Push tag
       let tags = this.state.tags;
@@ -171,7 +175,7 @@ export default class Container extends Component {
       tags[tag].push(textures[path]);
 
       // Set state
-      this.setState({ tags: tags, textures: textures });
+      this.setState({ tags: tags, textures: textures, textureID: this.state.textureID+1 });
     });
 
     watcher.on('addDir', path => {
@@ -184,24 +188,28 @@ export default class Container extends Component {
     });
 
     watcher.on('unlink', path => {
-      let textures = this.state.textures;
-
-      // Remove from tags
-      let tags = this.state.tags;
-      const texture = textures[path];
-
-      if (texture !== undefined) {
-        tags[texture.tag].splice(tags[texture.tag].indexOf(texture), 1);
-
-        // Remove from textures
-        delete textures[path];
-
-        this.setState({ tags: tags, textures: textures });
-      }
+      this.deleteTexture(path);
     });
 
     // Add watcher
     watchers[tag] = watcher;
+  }
+
+  deleteTexture = (path) => {
+    let textures = this.state.textures;
+
+    // Remove from tags
+    let tags = this.state.tags;
+    const texture = textures[path];
+
+    if (texture !== undefined) {
+      tags[texture.tag].splice(tags[texture.tag].indexOf(texture), 1);
+
+      // Remove from textures
+      delete textures[path];
+
+      this.setState({ tags: tags, textures: textures });
+    }
   }
 
   setFilterText = (input) => {
@@ -273,6 +281,11 @@ export default class Container extends Component {
 
   // Rename Selected Texture
   toggleRename = () => {
+
+    if (!this.state.renameSelectedTexture) {
+        this.setState({ filterText: '' });
+    }
+
     this.setState({
       renameSelectedTexture: !this.state.renameSelectedTexture,
       viewMode: 'textures'

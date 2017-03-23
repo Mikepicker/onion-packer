@@ -1,3 +1,4 @@
+![logo](./icon.png)
 # Onion Packer
 
 Onion Packer is all you need to keep your textures and images organized.
@@ -9,6 +10,7 @@ Onion Packer is free and open source, and it is dedicated to:
 - Game Developers
 - Engineers
 - Illustrators
+- Photographers
 - You
 
 ## Features
@@ -20,3 +22,17 @@ Onion Packer is free and open source, and it is dedicated to:
 - Copy textures to clipboard
 - Live 3D Preview of your texture
 - Much more to come!
+
+## How to build
+
+Onion Packer is based on [Electron](https://electron.atom.io/) and [ReactJS](https://facebook.github.io/react/). To set everything up simply clone this repo and run:
+
+`npm install`
+
+`npm run dev`
+
+## Website
+
+Visit the [Website](https://mikepicker.github.io/onion-packer-page/) to see the features and to download the latest release.
+
+Follow me on Twitter: [@Mikepicker](https://twitter.com/Mikepicker)
