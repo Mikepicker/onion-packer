@@ -53,48 +53,52 @@ export default class Container extends Component {
     // On drop textures
     document.ondrop = (e) => {
       e.preventDefault();
-      let sourcePath = e.dataTransfer.files[0].path.replace(/\\/g, pathlib.sep);
 
-      // Do nothing if coming from an internal folder
-      if (sourcePath.indexOf(basepath) !== -1) {
-        return;
-      }
+      for (let i = 0; i < e.dataTransfer.files.length; i++) {
 
-      // Get tag (textures folder)
-      let tag = sourcePath.split(pathlib.sep).pop();
+        let sourcePath = e.dataTransfer.files[i].path.replace(/\\/g, pathlib.sep);
 
-      // If it is a folder..
-      if (fs.lstatSync(sourcePath).isDirectory()) {
-
-        // Ignore already existing tags
-        if (this.state.tags[tag]) {
+        // Do nothing if coming from an internal folder
+        if (sourcePath.indexOf(basepath) !== -1) {
           return;
         }
 
-        // Clone directory
-        ncp(sourcePath, pathlib.join(TEXTURES_PATH, tag), (err) => {
-          if (err) {
-            return console.error(err);
+        // Get tag (textures folder)
+        let tag = sourcePath.split(pathlib.sep).pop();
+
+        // If it is a folder..
+        if (fs.lstatSync(sourcePath).isDirectory()) {
+
+          // Ignore already existing tags
+          if (this.state.tags[tag]) {
+            return;
           }
-          else {
+
+          // Clone directory
+          ncp(sourcePath, pathlib.join(TEXTURES_PATH, tag), (err) => {
+            if (err) {
+              return console.error(err);
+            }
+            else {
+
+              // Add watcher to folder
+              this.addWatcher(pathlib.join(TEXTURES_PATH, tag));
+            }
+          });
+        }
+        // If it is a single file..
+        else {
+
+          // Put in untagged tag
+          if (!fs.existsSync(pathlib.join(TEXTURES_PATH, 'untagged'))) {
+            fs.mkdirSync(pathlib.join(TEXTURES_PATH, 'untagged'));
 
             // Add watcher to folder
-            this.addWatcher(pathlib.join(TEXTURES_PATH, tag));
+            this.addWatcher(pathlib.join(TEXTURES_PATH, 'untagged'));
           }
-        })
-      }
-      // If it is a single file..
-      else {
 
-        // Put in untagged tag
-        if (!fs.existsSync(pathlib.join(TEXTURES_PATH, 'untagged'))) {
-          fs.mkdirSync(pathlib.join(TEXTURES_PATH, 'untagged'));
-
-          // Add watcher to folder
-          this.addWatcher(pathlib.join(TEXTURES_PATH, 'untagged'));
+          fs.copySync(sourcePath, pathlib.join(TEXTURES_PATH, 'untagged', pathlib.basename(sourcePath)));
         }
-
-        fs.copySync(sourcePath, pathlib.join(TEXTURES_PATH, 'untagged', pathlib.basename(sourcePath)));
       }
     }
 
@@ -117,7 +121,17 @@ export default class Container extends Component {
     // ENTER to Rename
     if (this.state.renameSelectedTexture && e.key === 'Enter' && this.state.filterText.length > 0) {
       const selectedTexture = this.state.selectedTextures[Object.keys(this.state.selectedTextures)[0]];
-      fs.renameSync(selectedTexture.path, pathlib.join(TEXTURES_PATH, selectedTexture.tag, this.state.filterText + '.' + selectedTexture.ext));
+      let newPath = pathlib.join(TEXTURES_PATH, selectedTexture.tag, this.state.filterText + '.' + selectedTexture.ext);
+
+      // Name already existing
+      let count = 1;
+      while (fs.existsSync(newPath)) {
+        newPath = pathlib.join(TEXTURES_PATH, selectedTexture.tag, this.state.filterText + '_' + count + '.' + selectedTexture.ext);
+        count++;
+      }
+
+      fs.renameSync(selectedTexture.path, newPath);
+
       this.deselectAllTextures();
       this.setState({ renameSelectedTexture: false });
     }
