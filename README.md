@@ -1,3 +1,4 @@
+![logo](./icon.png)
 # Onion Packer
 
 Onion Packer is all you need to keep your textures and images organized.
