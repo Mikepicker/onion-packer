@@ -13,6 +13,8 @@ Onion Packer is free and open source, and it is dedicated to:
 - Photographers
 - You
 
+### Onion Packer is currently in **Beta**! We would love to receive feedbacks and help from you :)
+
 ## Features
 
 - Organizes your textures by tags
