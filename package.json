@@ -8,7 +8,8 @@
     "start": "electron .",
     "dev": "npm run babel | npm start",
     "bundle_win": "electron-packager . onion-packer --overwrite --icon=./icon.ico --platform=win32",
-    "bundle_osx": "electron-packager . onion-packer --overwrite --icon=./icon.icns --platform=darwin"
+    "bundle_osx": "electron-packager . onion-packer --overwrite --icon=./icon.icns --platform=darwin",
+    "bundle_linux": "electron-packager . onion-packer --overwrite --icon=./icon.png --platform=linux"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
