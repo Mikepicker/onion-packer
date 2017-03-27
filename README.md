@@ -37,4 +37,6 @@ Onion Packer is based on [Electron](https://electron.atom.io/) and [ReactJS](htt
 
 Visit the [Website](https://mikepicker.github.io/onion-packer-page/) to see the features and to download the latest release.
 
+## Support Onion Packer on [Patreon](https://www.patreon.com/onionpacker)
+
 Follow me on Twitter: [@Mikepicker](https://twitter.com/Mikepicker)
