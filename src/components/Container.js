@@ -12,7 +12,7 @@ import chokidar from 'chokidar';
 import ncp from 'ncp';
 import rimraf from 'rimraf';
 
-const TEXTURES_PATH = './textures';
+const TEXTURES_PATH = './assets';
 const APP_PATH = pathlib.join(electron.remote.app.getAppPath(), '..', '..');
 
 // Chokidar file watchers (tag -> watcher)
@@ -382,12 +382,12 @@ export default class Container extends Component {
 
   render() {
 
-    let noTags = Object.keys(this.state.tags).length === 0;
+    let noTextures = Object.keys(this.state.textures).length === 0;
 
     // Drag & Drop UI
     let dragDrop =
     <div style={dragDropStyle}>
-      <div>Drag your textures here!</div>
+      <div>Drag your assets here!</div>
       <div className="fa fa-chevron-down fontbulger"/>
     </div>
 
@@ -433,11 +433,11 @@ export default class Container extends Component {
     switch(this.state.viewMode) {
 
       case 'textures':
-        content = noTags ? dragDrop : texturesGrids;
+        content = noTextures ? dragDrop : texturesGrids;
         break;
 
       case 'tags':
-        content = noTags ? dragDrop : tagsGrid;
+        content = tagsGrid;
         break;
 
       default:
@@ -453,7 +453,7 @@ export default class Container extends Component {
       placeholder = 'Type to filter';
     }
     else if (this.state.viewMode === 'tags') {
-      placeholder = 'Press Enter to add';
+      placeholder = 'Press Enter to add tag';
     }
 
     // Search bar

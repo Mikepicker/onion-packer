@@ -39,9 +39,15 @@ export default class TagsGrid extends Component {
 
     });
 
+    let noTags =
+    <div style={noTagsStyle}>
+      <div className="fa fa-chevron-up fontbulger"/>
+      <div>Type and press Enter to add a new tag</div>
+    </div>
+
     return(
       <div className="container-fluid" style={gridStyle}>
-        {filteredTags}
+        {Object.keys(this.props.tags).length > 0 ? filteredTags : noTags}
       </div>
     );
   }
@@ -54,4 +60,15 @@ const gridStyle = {
   justifyContent: 'center',
   flexDirection: 'row',
   flexWrap: 'wrap'
+}
+
+const noTagsStyle = {
+  position: 'absolute',
+  width: '100%',
+  top: '150px',
+  color: '#a1a1a1',
+  fontSize: '25px',
+  textAlign: 'center',
+  margin: '0 auto',
+  opacity: '0.7'
 }
